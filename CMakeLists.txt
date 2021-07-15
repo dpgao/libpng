@@ -64,8 +64,6 @@ option(PNG_HARDWARE_OPTIMIZATIONS "Enable hardware optimizations" ON)
 
 set(PNG_PREFIX "" CACHE STRING "Prefix to add to the API function names")
 set(DFA_XTRA "" CACHE FILEPATH "File containing extra configuration settings")
-# When cross-compiling ${CMAKE_COMMAND} might not be the right executable to run the tests
-set(TEST_CMAKE_COMMAND "${CMAKE_COMMAND}" CACHE FILEPATH "Path to CMake for running the tests")
 
 if(PNG_HARDWARE_OPTIMIZATIONS)
 
@@ -622,7 +620,7 @@ function(png_add_test)
                  "${CMAKE_CURRENT_BINARY_DIR}/tests/${_PAT_NAME}.cmake"
                  @ONLY)
   add_test(NAME "${_PAT_NAME}"
-           COMMAND "${TEST_CMAKE_COMMAND}"
+           COMMAND "${CMAKE_COMMAND}"
                    "-DLIBPNG=$<TARGET_FILE:png>"
                    "-DTEST_COMMAND=$<TARGET_FILE:${_PAT_COMMAND}>"
                    -P "${CMAKE_CURRENT_BINARY_DIR}/tests/${_PAT_NAME}.cmake")
