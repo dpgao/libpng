@@ -37,12 +37,15 @@ include(GNUInstallDirs)
 
 # Allow users to specify location of zlib.
 # Useful if zlib is being built alongside this as a sub-project.
-option(PNG_BUILD_ZLIB "Custom zlib Location, else find_package is used" OFF)
+option(PNG_BUILD_ZLIB "Custom zlib Location, else find_package is used" ON)
 
 if(NOT PNG_BUILD_ZLIB)
   find_package(ZLIB REQUIRED)
   include_directories(${ZLIB_INCLUDE_DIRS})
 endif()
+
+set(ZLIB_INCLUDE_DIRS "/Users/gabor/cheri/output/morello-sdk/sysroot-morello-purecap/usr/include")
+set(ZLIB_LIBRARIES "/Users/gabor/cheri/build/cheribsd-morello-purecap-build/Users/gabor/cheri/cheribsd/arm64.aarch64c/lib/libz_nofio/libz_nofio.a")
 
 if(UNIX AND NOT APPLE AND NOT BEOS AND NOT HAIKU AND NOT EMSCRIPTEN)
   find_library(M_LIBRARY m)
@@ -55,7 +58,7 @@ endif()
 option(PNG_SHARED "Build shared lib" ON)
 option(PNG_STATIC "Build static lib" ON)
 option(PNG_EXECUTABLES "Build libpng executables" ON)
-option(PNG_TESTS "Build libpng tests" ON)
+option(PNG_TESTS "Build libpng tests" OFF)
 
 # Many more configuration options could be added here.
 option(PNG_FRAMEWORK "Build OS X framework" OFF)
@@ -63,7 +66,7 @@ option(PNG_DEBUG "Build with debug output" OFF)
 option(PNG_HARDWARE_OPTIMIZATIONS "Enable hardware optimizations" ON)
 
 set(PNG_PREFIX "" CACHE STRING "Prefix to add to the API function names")
-set(DFA_XTRA "" CACHE FILEPATH "File containing extra configuration settings")
+set(DFA_XTRA "${CMAKE_SOURCE_DIR}/scripts/pngusr-sandbox.dfa" CACHE FILEPATH "File containing extra configuration settings")
 
 if(PNG_HARDWARE_OPTIMIZATIONS)
 
@@ -265,6 +268,7 @@ endif()
 
 find_program(AWK NAMES gawk awk)
 
+include_directories(/Users/gabor/cheri/build/libpng-morello-purecap-build)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 if(NOT AWK OR ANDROID OR IOS)

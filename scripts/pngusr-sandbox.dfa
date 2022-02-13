@@ -1,0 +1,18 @@
+# Override default config for only sandbox-friendly APIs
+
+everything = off
+
+# Allow read and write on buffers
+option READ on
+option SEQUENTIAL_READ on
+option READ_bKGD on
+option READ_GAMMA on
+option READ_EXPAND on
+option READ_STRIP_16_TO_8 on
+option READ_GRAY_TO_RGB on
+option WRITE on
+option WRITE_INVERT on
+option WRITE_PACK on
+
+option FIXED_POINT on
+option FLOATING_ARITHMETIC on
