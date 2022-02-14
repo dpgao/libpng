@@ -58,7 +58,7 @@ endif()
 option(PNG_SHARED "Build shared lib" ON)
 option(PNG_STATIC "Build static lib" ON)
 option(PNG_EXECUTABLES "Build libpng executables" ON)
-option(PNG_TESTS "Build libpng tests" OFF)
+option(PNG_TESTS "Build libpng tests" ON)
 
 # Many more configuration options could be added here.
 option(PNG_FRAMEWORK "Build OS X framework" OFF)

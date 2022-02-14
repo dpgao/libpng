@@ -5,14 +5,39 @@ everything = off
 # Allow read and write on buffers
 option READ on
 option SEQUENTIAL_READ on
+option PROGRESSIVE_READ on
+option SIMPLIFIED_READ off
 option READ_bKGD on
+option READ_cHRM on
 option READ_GAMMA on
+option READ_gAMA on
+option READ_oFFs on
+option READ_pCAL on
+option READ_pHYs on
+option READ_sBIT on
+option READ_sCAL on
+option READ_sRGB on
+option READ_sPLT on
+option READ_tEXt on
+option READ_tIME on
+option READ_tRNS on
+option READ_zTXt on
 option READ_EXPAND on
 option READ_STRIP_16_TO_8 on
 option READ_GRAY_TO_RGB on
+option READ_RGB_TO_GRAY on
+option READ_TRANSFORMS on
 option WRITE on
+option SIMPLIFIED_WRITE off
+option WRITE_INTERLACING on
 option WRITE_INVERT on
 option WRITE_PACK on
 
 option FIXED_POINT on
 option FLOATING_ARITHMETIC on
+
+option EASY_ACCESS on
+option SET_USER_LIMITS on
+option WARNINGS on
+
+option SETJMP off
