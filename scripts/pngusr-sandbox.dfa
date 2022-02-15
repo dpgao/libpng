@@ -34,10 +34,12 @@ option WRITE_INVERT on
 option WRITE_PACK on
 
 option FIXED_POINT on
+option FLOATING_POINT on
 option FLOATING_ARITHMETIC on
 
 option EASY_ACCESS on
 option SET_USER_LIMITS on
 option WARNINGS on
+option ERROR_TEXT on
 
 option SETJMP off
