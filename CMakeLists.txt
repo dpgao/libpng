@@ -495,6 +495,7 @@ set(libpng_sources
 )
 set(pngtest_sources
     pngtest.c
+    ${libpng_public_hdrs}
 )
 set(pngvalid_sources
     contrib/libtests/pngvalid.c
