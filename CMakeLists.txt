@@ -643,7 +643,9 @@ if(PNG_TESTS AND PNG_SHARED)
   set(PNGTEST_PNG "${CMAKE_CURRENT_SOURCE_DIR}/pngtest.png")
 
   add_executable(pngtest ${pngtest_sources})
-  target_link_libraries(pngtest png)
+
+  add_executable(pngtest-sandbox ${pngtest_sources})
+  target_compile_definitions(pngtest-sandbox PUBLIC -DSANDBOX)
 
   png_add_test(NAME pngtest
                COMMAND pngtest

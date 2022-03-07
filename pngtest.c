@@ -1835,8 +1835,13 @@ static const char *outname = "pngout.png";
 int
 main(int argc, char *argv[])
 {
-   /* Setup dlopen and pull in symbols */
-   void *libpng_handle = dlopen("libpng16.so.16", RTLD_LAZY);
+   /* dlopen libpng and pull in symbols */
+#ifdef SANDBOX
+#  define DLOPEN  dlopen_sandbox
+#else
+#  define DLOPEN  dlopen
+#endif
+   void *libpng_handle = DLOPEN("libpng16.so.16", RTLD_LAZY);
 
    DLSYM_PULL(png_get_io_ptr);
    DLSYM_PULL(png_error);
