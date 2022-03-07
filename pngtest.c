@@ -57,6 +57,12 @@
    DLSYM_PULL(png_get_##type);  \
    DLSYM_PULL(png_set_##type)
 
+#ifdef SANDBOX
+#define DLWRAP_CALLBACK(callback)   dlwrap_callback(callback)
+#else
+#define DLWRAP_CALLBACK(callback)   callback
+#endif
+
 /* Known chunks that exist in pngtest.png must be supported or pngtest will fail
  * simply as a result of re-ordering them.  This may be fixed in 1.7
  *
@@ -560,7 +566,7 @@ PNGCBAPI png_debug_malloc(png_structp png_ptr, png_alloc_size_t size)
       /* Restore malloc_fn and free_fn */
 
       png_set_mem_fn(png_ptr,
-          NULL, png_debug_malloc, png_debug_free);
+          NULL, DLWRAP_CALLBACK(png_debug_malloc), DLWRAP_CALLBACK(png_debug_free));
 
       if (size != 0 && pinfo->pointer == NULL)
       {
@@ -915,8 +921,8 @@ test_one_file(const char *inname, const char *outname)
    read_ptr =
        png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 #endif
-   png_set_error_fn(read_ptr, &error_parameters, pngtest_error,
-       pngtest_warning);
+   png_set_error_fn(read_ptr, &error_parameters,
+       DLWRAP_CALLBACK(pngtest_error), DLWRAP_CALLBACK(pngtest_warning));
 
 #ifdef PNG_WRITE_SUPPORTED
 #if defined(PNG_USER_MEM_SUPPORTED) && PNG_DEBUG
@@ -927,8 +933,8 @@ test_one_file(const char *inname, const char *outname)
    write_ptr =
        png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 #endif
-   png_set_error_fn(write_ptr, &error_parameters, pngtest_error,
-       pngtest_warning);
+   png_set_error_fn(write_ptr, &error_parameters,
+       DLWRAP_CALLBACK(pngtest_error), DLWRAP_CALLBACK(pngtest_warning));
 #endif
    pngtest_debug("Allocating read_info, write_info and end_info structures");
    read_info_ptr = png_create_info_struct(read_ptr);
@@ -941,7 +947,7 @@ test_one_file(const char *inname, const char *outname)
 #ifdef PNG_READ_USER_CHUNKS_SUPPORTED
    init_callback_info(read_info_ptr);
    png_set_read_user_chunk_fn(read_ptr, &user_chunk_data,
-       read_user_chunk_callback);
+       DLWRAP_CALLBACK(read_user_chunk_callback));
 #endif
 
 #ifdef PNG_SETJMP_SUPPORTED
@@ -1031,11 +1037,11 @@ test_one_file(const char *inname, const char *outname)
    png_init_io(write_ptr, fpout);
 #  endif
 #else
-   png_set_read_fn(read_ptr, (png_voidp)fpin, pngtest_read_data);
+   png_set_read_fn(read_ptr, (png_voidp)fpin, DLWRAP_CALLBACK(pngtest_read_data));
 #  ifdef PNG_WRITE_SUPPORTED
-   png_set_write_fn(write_ptr, (png_voidp)fpout,  pngtest_write_data,
+   png_set_write_fn(write_ptr, (png_voidp)fpout,  DLWRAP_CALLBACK(pngtest_write_data),
 #    ifdef PNG_WRITE_FLUSH_SUPPORTED
-       pngtest_flush);
+       DLWRAP_CALLBACK(pngtest_flush));
 #    else
        NULL);
 #    endif
@@ -1045,9 +1051,9 @@ test_one_file(const char *inname, const char *outname)
    if (status_dots_requested == 1)
    {
 #ifdef PNG_WRITE_SUPPORTED
-      png_set_write_status_fn(write_ptr, write_row_callback);
+      png_set_write_status_fn(write_ptr, DLWRAP_CALLBACK(write_row_callback));
 #endif
-      png_set_read_status_fn(read_ptr, read_row_callback);
+      png_set_read_status_fn(read_ptr, DLWRAP_CALLBACK(read_row_callback));
    }
 
    else
@@ -1059,11 +1065,11 @@ test_one_file(const char *inname, const char *outname)
    }
 
 #ifdef PNG_READ_USER_TRANSFORM_SUPPORTED
-   png_set_read_user_transform_fn(read_ptr, read_user_callback);
+   png_set_read_user_transform_fn(read_ptr, DLWRAP_CALLBACK(read_user_callback));
 #endif
 #ifdef PNG_WRITE_USER_TRANSFORM_SUPPORTED
    zero_samples = 0;
-   png_set_write_user_transform_fn(write_ptr, count_zero_samples);
+   png_set_write_user_transform_fn(write_ptr, DLWRAP_CALLBACK(count_zero_samples));
 #endif
 
 #ifdef PNG_SET_UNKNOWN_CHUNKS_SUPPORTED
