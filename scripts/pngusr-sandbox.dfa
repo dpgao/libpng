@@ -23,15 +23,24 @@ option READ_tIME on
 option READ_tRNS on
 option READ_zTXt on
 option READ_EXPAND on
+option READ_16BIT on
 option READ_STRIP_16_TO_8 on
 option READ_GRAY_TO_RGB on
 option READ_RGB_TO_GRAY on
 option READ_TRANSFORMS on
+option READ_SWAP on
+option READ_USER_CHUNKS on
+option READ_GAMMA on
+option READ_BACKGROUND on
+option READ_ALPHA_MODE on
 option WRITE on
 option SIMPLIFIED_WRITE off
 option WRITE_INTERLACING on
 option WRITE_INVERT on
 option WRITE_PACK on
+option WRITE_CUSTOMIZE_COMPRESSION on
+option WRITE_FILTER on
+option WRITE_16BIT on
 
 option FIXED_POINT on
 option FLOATING_POINT on
@@ -40,6 +49,13 @@ option FLOATING_ARITHMETIC on
 option EASY_ACCESS on
 option SET_USER_LIMITS on
 option WARNINGS on
+option BENIGN_ERRORS on
 option ERROR_TEXT on
+
+option CONVERT_tIME on
+
+#option SET_UNKNOWN_CHUNKS on
+#option HANDLE_AS_UNKNOWN on
+#option SAVE_UNKNOWN_CHUNKS on
 
 option SETJMP off

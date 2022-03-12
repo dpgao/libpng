@@ -1852,6 +1852,7 @@ main(int argc, char *argv[])
    DLSYM_PULL(png_get_io_ptr);
    DLSYM_PULL(png_error);
    DLSYM_PULL(png_get_error_ptr);
+   DLSYM_PULL(png_get_user_chunk_ptr);
    DLSYM_PULL(png_create_read_struct);
    DLSYM_PULL(png_create_write_struct);
    DLSYM_PULL(png_set_read_fn);
@@ -1860,7 +1861,18 @@ main(int argc, char *argv[])
    DLSYM_PULL(png_create_info_struct);
    DLSYM_PULL(png_set_write_status_fn);
    DLSYM_PULL(png_set_read_status_fn);
+   DLSYM_PULL(png_set_read_user_chunk_fn);
+//   DLSYM_PULL(png_set_keep_unknown_chunks);
    DLSYM_PULL(png_read_info);
+   DLSYM_PULL(png_get_uint_31);
+   DLSYM_PULL(png_write_chunk);
+   DLSYM_PULL(png_save_uint_32);
+   DLSYM_PULL(png_get_valid);
+   DLSYM_PULL(png_set_benign_errors);
+   DLSYM_PULL(png_set_crc_action);
+   DLSYM_PULL(png_set_option);
+//   DLSYM_PULL(png_get_unknown_chunks);
+//   DLSYM_PULL(png_set_unknown_chunks);
    DLSYM_PULL_GET_SET(IHDR);
    DLSYM_PULL_GET_SET(cHRM_fixed);
    DLSYM_PULL_GET_SET(gAMA_fixed);
