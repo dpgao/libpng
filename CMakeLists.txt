@@ -643,9 +643,13 @@ if(PNG_TESTS AND PNG_SHARED)
   set(PNGTEST_PNG "${CMAKE_CURRENT_SOURCE_DIR}/pngtest.png")
 
   add_executable(pngtest ${pngtest_sources})
+  target_include_directories(pngtest PUBLIC "${CMAKE_SYSROOT}/include")
+  target_link_libraries(pngtest pmc xo)
 
   add_executable(pngtest-sandbox ${pngtest_sources})
+  target_include_directories(pngtest-sandbox PUBLIC "${CMAKE_SYSROOT}/include")
   target_compile_definitions(pngtest-sandbox PUBLIC -DSANDBOX)
+  target_link_libraries(pngtest-sandbox pmc xo)
 
   png_add_test(NAME pngtest
                COMMAND pngtest

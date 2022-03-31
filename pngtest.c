@@ -31,16 +31,19 @@
  * of files at once by typing "pngtest -m file1.png file2.png ..."
  */
 
-#define _POSIX_SOURCE 1
+//#define _POSIX_SOURCE 1
 
 #include <dlfcn.h>
+#include <libxo/xo.h>
+#include <pmc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sysexits.h>
 
 /* Defined so I can write to a file on gui/windowing platforms */
-/*  #define STDERR stderr  */
-#define STDERR stdout   /* For DOS */
+#define STDERR stderr
+//#define STDERR stdout   /* For DOS */
 
 #include "pnglibconf.h"
 #undef PNG_LINKAGE_API
@@ -62,6 +65,69 @@
 #else
 #define DLWRAP_CALLBACK(callback)   callback
 #endif
+
+#define NUM_COUNTERS (4U)
+static const char *counter_set[] = {
+        "CPU_CYCLES",
+        "BR_MIS_PRED",
+        "INST_RETIRED",
+        "L1D_CACHE_REFILL"
+};
+
+#define NO_INNER_ITERATIONS  (1U)
+#define NO_OUTER_ITERATIONS  (100U)
+
+static pmc_id_t pmcids[NUM_COUNTERS];
+static unsigned long pmc_values[NUM_COUNTERS][NO_OUTER_ITERATIONS];
+
+static void
+pmc_setup_run(void)
+{
+  for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
+    if (pmc_allocate(counter_set[counter_index], PMC_MODE_TC, 0, PMC_CPU_ANY, &pmcids[counter_index], 64 * 1024) < 0) {
+      xo_err(EX_OSERR, "FAIL: pmc_allocate (%s) for %s", strerror(errno), counter_set[counter_index]);
+    }
+    if (pmc_attach(pmcids[counter_index], 0) < 0) {
+      xo_err(EX_OSERR, "FAIL: pmc_attach (%s) for %s", strerror(errno), counter_set[counter_index]);
+    }
+    if (pmc_write(pmcids[counter_index], 0) < 0) {
+      xo_err(EX_OSERR, "FAIL: pmc_write (%s) for %s", strerror(errno), counter_set[counter_index]);
+    }
+  }
+}
+
+static void
+pmc_teardown_run(void)
+{
+  for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
+    if (pmc_detach(pmcids[counter_index], 0) < 0) {
+      xo_err(EX_OSERR, "FAIL: pmc_detach (%s) for %s", strerror(errno), counter_set[counter_index]);
+    }
+    if (pmc_release(pmcids[counter_index]) < 0) {
+      xo_err(EX_OSERR, "FAIL: pmc_release (%s) for %s", strerror(errno), counter_set[counter_index]);
+    }
+  }
+}
+
+static __inline void
+pmc_begin(void)
+{
+  for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
+    if (pmc_start(pmcids[counter_index]) < 0) {
+      xo_err(EX_OSERR, "FAIL: pmc_start (%s) for %s", strerror(errno), counter_set[counter_index]);
+    }
+  }
+}
+
+static __inline void
+pmc_end(void)
+{
+  for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
+    if (pmc_stop(pmcids[counter_index]) < 0) {
+      xo_err(EX_OSERR, "FAIL: pmc_stop (%s) for %s", strerror(errno), counter_set[counter_index]);
+    }
+  }
+}
 
 /* Known chunks that exist in pngtest.png must be supported or pngtest will fail
  * simply as a result of re-ordering them.  This may be fixed in 1.7
@@ -165,6 +231,7 @@ static int verbose = 0;
 static int strict = 0;
 static int relaxed = 0;
 static int xfail = 0;
+static int benchmark = 0;
 static int unsupported_chunks = 0; /* chunk unsupported by libpng in input */
 static int error_count = 0; /* count calls to png_error */
 static int warning_count = 0; /* count calls to png_warning */
@@ -1829,6 +1896,80 @@ test_one_file(const char *inname, const char *outname)
    return (0);
 }
 
+/* Run test_one_file in a benchmark loop */
+static int
+benchmark_test_one_file(const char *inname, const char *outname)
+{
+   /* Initialise PMC library */
+   pmc_init();
+
+   /* Run function call benchmark in a loop */
+   for (unsigned outer_it_no = 0; outer_it_no < NO_OUTER_ITERATIONS; ++outer_it_no) {
+
+      /* Attach and start counters */
+      pmc_setup_run();
+      pmc_begin();
+
+      /* Run the tests in a loop */
+//      for (unsigned inner_it_no = 0; inner_it_no < NO_INNER_ITERATIONS; ++inner_it_no) {
+         int kerror = test_one_file(inname, outname);
+//      }
+
+      /* Read counter values */
+      for (unsigned counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
+         if (pmc_read(pmcids[counter_index], &pmc_values[counter_index][outer_it_no]) < 0) {
+            xo_err(EX_OSERR, "FAIL: pmc_read (%s) for %s", strerror(errno), counter_set[counter_index]);
+         }
+      }
+
+      /* Detach counters */
+      pmc_end();
+      pmc_teardown_run();
+
+      /* If an error has occurred, return the error */
+      if (kerror) {
+         return kerror;
+      }
+   }
+
+   /* Initialise xo state */
+#ifdef SANDBOX
+   xo_open_container("pngtest-sandbox");
+#else
+   xo_open_container("pngtest");
+#endif
+
+   xo_emit("{Lwc:Outer iterations}{:outer-iterations/%u}", NO_OUTER_ITERATIONS);
+   xo_emit("{Lwc:Inner iterations}{:inner-iterations/%u}", NO_INNER_ITERATIONS);
+
+   xo_open_list("libraries");
+   xo_open_instance("libraries");
+   xo_emit("{Lwc:Library path}{:library-path/%s}\n", "libpng16.so.16");
+   for (unsigned counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
+      xo_open_list(counter_set[counter_index]);
+      for (unsigned i = 0; i < NO_OUTER_ITERATIONS; ++i) {
+         const char *const fmt = "{Lwc:%s}{l:%s/%cU}\n";
+         char fmt_buf[50];
+         sprintf(fmt_buf, fmt, counter_set[counter_index], counter_set[counter_index], '%');
+         xo_emit(fmt_buf, pmc_values[counter_index][i]);
+      }
+      xo_close_list(counter_set[counter_index]);
+   }
+   xo_close_instance("libraries");
+   xo_close_list("libraries");
+
+#ifdef SANDBOX
+   xo_close_container("pngtest-sandbox");
+#else
+   xo_close_container("pngtest");
+#endif
+
+   /* Finish writing out data */
+   xo_finish();
+
+   return 0;
+}
+
 /* Input and output filenames */
 #ifdef RISCOS
 static const char *inname = "pngtest/png";
@@ -2000,6 +2141,13 @@ main(int argc, char *argv[])
          relaxed++;
          multiple=1;
       }
+      else if (strcmp(argv[1], "--benchmark") == 0)
+      {
+         verbose = argc - 2; /* Hack to allow libxo arguments */
+         inname = argv[2];
+         status_dots_requested = 0;
+         benchmark = 1;
+      }
 
       else
       {
@@ -2037,7 +2185,16 @@ main(int argc, char *argv[])
 #if PNG_DEBUG > 0
          fprintf(STDERR, "\n");
 #endif
-         kerror = test_one_file(argv[i], outname);
+         if (benchmark)
+         {
+            xo_parse_args(argc, argv);
+            kerror = benchmark_test_one_file(argv[i], outname);
+         }
+         else
+         {
+            kerror = test_one_file(argv[i], outname);
+         }
+
          if (kerror == 0)
          {
 #ifdef PNG_WRITE_USER_TRANSFORM_SUPPORTED
@@ -2121,7 +2278,15 @@ main(int argc, char *argv[])
 #endif
          }
 
-         kerror = test_one_file(inname, outname);
+         if (benchmark)
+         {
+            xo_parse_args(argc, argv);
+            kerror = benchmark_test_one_file(inname, outname);
+         }
+         else
+         {
+            kerror = test_one_file(inname, outname);
+         }
 
          if (kerror == 0)
          {
@@ -2178,6 +2343,8 @@ main(int argc, char *argv[])
              }
           }
 #endif
+         if (benchmark)
+            break;
        }
 #if defined(PNG_USER_MEM_SUPPORTED) && PNG_DEBUG
        fprintf(STDERR, " Current memory allocation: %10d bytes\n",
