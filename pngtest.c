@@ -40,6 +40,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sysexits.h>
+#include <sys/cpuset.h>
 
 /* Defined so I can write to a file on gui/windowing platforms */
 #define STDERR stderr
@@ -75,7 +76,7 @@ static const char *counter_set[] = {
 };
 
 #define NO_INNER_ITERATIONS  (1U)
-#define NO_OUTER_ITERATIONS  (100U)
+#define NO_OUTER_ITERATIONS  (1000U)
 
 static pmc_id_t pmcids[NUM_COUNTERS];
 static unsigned long pmc_values[NUM_COUNTERS][NO_OUTER_ITERATIONS];
@@ -1902,6 +1903,14 @@ benchmark_test_one_file(const char *inname, const char *outname)
 {
    /* Initialise PMC library */
    pmc_init();
+
+   cpuset_t cpuset_mask;
+   /* Pin the benchmark to CPU 0 */
+   CPU_ZERO(&cpuset_mask);
+   CPU_SET(0, &cpuset_mask);
+   if (cpuset_setaffinity(CPU_LEVEL_WHICH, CPU_WHICH_PID, -1, sizeof(cpuset_mask), &cpuset_mask) < 0) {
+      xo_err(EX_OSERR, "FAIL: cpuset_setaffinity (%s)", strerror(errno));
+   }
 
    /* Run function call benchmark in a loop */
    for (unsigned outer_it_no = 0; outer_it_no < NO_OUTER_ITERATIONS; ++outer_it_no) {
