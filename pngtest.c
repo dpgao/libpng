@@ -31,8 +31,6 @@
  * of files at once by typing "pngtest -m file1.png file2.png ..."
  */
 
-#define _POSIX_SOURCE 1
-
 #include <dlfcn.h>
 #include <libxo/xo.h>
 #include <pmc.h>
@@ -50,7 +48,6 @@
 #undef PNG_LINKAGE_API
 #define PNG_LINKAGE_API
 #define PNG_FUNCTION(type, name, args, attributes) static attributes type (*name) args = NULL;
-#define PNG_ALLOCATED
 #include "png.h"
 
 #define DLSYM_PULL(name) \
