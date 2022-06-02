@@ -37,15 +37,12 @@ include(GNUInstallDirs)
 
 # Allow users to specify location of zlib.
 # Useful if zlib is being built alongside this as a sub-project.
-option(PNG_BUILD_ZLIB "Custom zlib Location, else find_package is used" ON)
+option(PNG_BUILD_ZLIB "Custom zlib Location, else find_package is used" OFF)
 
 if(NOT PNG_BUILD_ZLIB)
   find_package(ZLIB REQUIRED)
   include_directories(${ZLIB_INCLUDE_DIRS})
 endif()
-
-set(ZLIB_INCLUDE_DIRS "/Users/gabor/cheri/output/morello-sdk/sysroot-morello-purecap/usr/include")
-set(ZLIB_LIBRARIES "/Users/gabor/cheri/build/cheribsd-morello-purecap-build/Users/gabor/cheri/cheribsd/arm64.aarch64c/lib/libz_nofio/libz_nofio.a")
 
 if(UNIX AND NOT APPLE AND NOT BEOS AND NOT HAIKU AND NOT EMSCRIPTEN)
   find_library(M_LIBRARY m)
@@ -66,7 +63,7 @@ option(PNG_DEBUG "Build with debug output" OFF)
 option(PNG_HARDWARE_OPTIMIZATIONS "Enable hardware optimizations" ON)
 
 set(PNG_PREFIX "" CACHE STRING "Prefix to add to the API function names")
-set(DFA_XTRA "${CMAKE_SOURCE_DIR}/scripts/pngusr-sandbox.dfa" CACHE FILEPATH "File containing extra configuration settings")
+set(DFA_XTRA "" CACHE FILEPATH "File containing extra configuration settings")
 
 if(PNG_HARDWARE_OPTIMIZATIONS)
 
@@ -268,7 +265,6 @@ endif()
 
 find_program(AWK NAMES gawk awk)
 
-include_directories(/Users/gabor/cheri/build/libpng-morello-purecap-build)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 if(NOT AWK OR ANDROID OR IOS)
@@ -495,7 +491,6 @@ set(libpng_sources
 )
 set(pngtest_sources
     pngtest.c
-    ${libpng_public_hdrs}
 )
 set(pngvalid_sources
     contrib/libtests/pngvalid.c
@@ -533,7 +528,6 @@ if(PNG_SHARED)
   add_library(png SHARED ${libpng_sources})
   set(PNG_LIB_TARGETS png)
   set_target_properties(png PROPERTIES OUTPUT_NAME ${PNG_LIB_NAME})
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-Bsymbolic-functions")
   add_dependencies(png genfiles)
   if(MSVC)
     # MVC does not append 'lib'. Do it here, to have consistent name.
@@ -643,13 +637,7 @@ if(PNG_TESTS AND PNG_SHARED)
   set(PNGTEST_PNG "${CMAKE_CURRENT_SOURCE_DIR}/pngtest.png")
 
   add_executable(pngtest ${pngtest_sources})
-  target_include_directories(pngtest PUBLIC "${CMAKE_SYSROOT}/include")
   target_link_libraries(pngtest pmc xo)
-
-  add_executable(pngtest-sandbox ${pngtest_sources})
-  target_include_directories(pngtest-sandbox PUBLIC "${CMAKE_SYSROOT}/include")
-  target_compile_definitions(pngtest-sandbox PUBLIC -DSANDBOX)
-  target_link_libraries(pngtest-sandbox pmc xo)
 
   png_add_test(NAME pngtest
                COMMAND pngtest

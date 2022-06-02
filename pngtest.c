@@ -31,7 +31,7 @@
  * of files at once by typing "pngtest -m file1.png file2.png ..."
  */
 
-//#define _POSIX_SOURCE 1
+#define _POSIX_SOURCE 1
 
 #include <dlfcn.h>
 #include <libxo/xo.h>
