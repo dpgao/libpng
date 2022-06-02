@@ -1995,7 +1995,11 @@ main(int argc, char *argv[])
 #else
 #  define DLOPEN  dlopen
 #endif
-   void *libpng_handle = DLOPEN("libpng16.so.16", RTLD_LAZY);
+   void *libpng_handle = DLOPEN("libpng.so", RTLD_LAZY);
+   if (!libpng_handle) {
+      fprintf(STDERR, "dlopen failed: %s\n", dlerror());
+      return -1;
+   }
 
    DLSYM_PULL(png_get_io_ptr);
    DLSYM_PULL(png_error);
