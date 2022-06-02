@@ -48,6 +48,7 @@
 #undef PNG_LINKAGE_API
 #define PNG_LINKAGE_API
 #define PNG_FUNCTION(type, name, args, attributes) static attributes type (*name) args = NULL;
+#define PNG_ALLOCATED
 #include "png.h"
 
 #define DLSYM_PULL(name) \
