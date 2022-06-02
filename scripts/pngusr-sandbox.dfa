@@ -1,3 +1,4 @@
 # Override default config for only sandbox-friendly APIs
 
+option ARM_NEON_OPT 0
 option SETJMP off

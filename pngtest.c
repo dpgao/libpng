@@ -42,7 +42,7 @@
 
 /* Defined so I can write to a file on gui/windowing platforms */
 #define STDERR stderr
-//#define STDERR stdout   /* For DOS */
+// #define STDERR stdout   /* For DOS */
 
 #include "pnglibconf.h"
 #undef PNG_LINKAGE_API
@@ -53,7 +53,7 @@
 
 #define DLSYM_PULL(name) \
    name = dlsym(libpng_handle, #name); \
-   if (NULL == (name)) do { fprintf(STDERR, "Symbol " #name " not found in libpng\n"); return -1; } while (0)
+   if (!name) do { fprintf(STDERR, "Symbol " #name " not found in libpng\n"); return -1; } while (0)
 
 #define DLSYM_PULL_GET_SET(type) \
    DLSYM_PULL(png_get_##type);  \
