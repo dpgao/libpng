@@ -44,20 +44,7 @@
 #define STDERR stderr
 // #define STDERR stdout   /* For DOS */
 
-#include "pnglibconf.h"
-#undef PNG_LINKAGE_API
-#define PNG_LINKAGE_API
-#define PNG_FUNCTION(type, name, args, attributes) static attributes type (*name) args = NULL;
-#define PNG_ALLOCATED
 #include "png.h"
-
-#define DLSYM_PULL(name) \
-   name = dlsym(libpng_handle, #name); \
-   if (!name) do { fprintf(STDERR, "Symbol " #name " not found in libpng\n"); return -1; } while (0)
-
-#define DLSYM_PULL_GET_SET(type) \
-   DLSYM_PULL(png_get_##type);  \
-   DLSYM_PULL(png_set_##type)
 
 #ifdef SANDBOX
 #define DLWRAP_CALLBACK(callback)   dlwrap_callback(callback)
@@ -1989,82 +1976,10 @@ static const char *outname = "pngout.png";
 int
 main(int argc, char *argv[])
 {
-   /* dlopen libpng and pull in symbols */
-#ifdef SANDBOX
-#  define DLOPEN  dlopen_sandbox
-#else
-#  define DLOPEN  dlopen
-#endif
-   void *libpng_handle = DLOPEN("libpng.so", RTLD_LAZY);
-   if (!libpng_handle) {
-      fprintf(STDERR, "dlopen failed: %s\n", dlerror());
-      return -1;
-   }
-
-   DLSYM_PULL(png_get_io_ptr);
-   DLSYM_PULL(png_error);
-   DLSYM_PULL(png_get_error_ptr);
-   DLSYM_PULL(png_get_user_chunk_ptr);
-   DLSYM_PULL(png_create_read_struct);
-   DLSYM_PULL(png_create_write_struct);
-   DLSYM_PULL(png_set_read_fn);
-   DLSYM_PULL(png_set_write_fn);
-   DLSYM_PULL(png_set_error_fn);
-   DLSYM_PULL(png_create_info_struct);
-   DLSYM_PULL(png_set_write_status_fn);
-   DLSYM_PULL(png_set_read_status_fn);
-   DLSYM_PULL(png_set_read_user_chunk_fn);
-//   DLSYM_PULL(png_set_keep_unknown_chunks);
-   DLSYM_PULL(png_read_info);
-   DLSYM_PULL(png_get_uint_31);
-   DLSYM_PULL(png_write_chunk);
-   DLSYM_PULL(png_save_uint_32);
-   DLSYM_PULL(png_get_valid);
-   DLSYM_PULL(png_set_benign_errors);
-   DLSYM_PULL(png_set_crc_action);
-   DLSYM_PULL(png_set_option);
-//   DLSYM_PULL(png_get_unknown_chunks);
-//   DLSYM_PULL(png_set_unknown_chunks);
-   DLSYM_PULL_GET_SET(IHDR);
-   DLSYM_PULL_GET_SET(cHRM_fixed);
-   DLSYM_PULL_GET_SET(gAMA_fixed);
-   DLSYM_PULL_GET_SET(sRGB);
-   DLSYM_PULL_GET_SET(PLTE);
-   DLSYM_PULL_GET_SET(bKGD);
-   DLSYM_PULL_GET_SET(oFFs);
-   DLSYM_PULL_GET_SET(pCAL);
-   DLSYM_PULL_GET_SET(pHYs);
-   DLSYM_PULL_GET_SET(sBIT);
-   DLSYM_PULL_GET_SET(sCAL);
-   DLSYM_PULL_GET_SET(sPLT);
-   DLSYM_PULL_GET_SET(text);
-   DLSYM_PULL_GET_SET(tIME);
-   DLSYM_PULL_GET_SET(tRNS);
-   DLSYM_PULL(png_write_info_before_PLTE);
-   DLSYM_PULL(png_write_info);
-   DLSYM_PULL(png_malloc);
-   DLSYM_PULL(png_free);
-   DLSYM_PULL(png_get_rowbytes);
-   DLSYM_PULL(png_set_interlace_handling);
-   DLSYM_PULL(png_read_rows);
-   DLSYM_PULL(png_write_rows);
-   DLSYM_PULL(png_read_end);
-   DLSYM_PULL(png_write_end);
-   DLSYM_PULL(png_get_image_width);
-   DLSYM_PULL(png_get_image_height);
-   DLSYM_PULL(png_destroy_read_struct);
-   DLSYM_PULL(png_destroy_info_struct);
-   DLSYM_PULL(png_destroy_write_struct);
-
    int multiple = 0;
    int ierror = 0;
 
    png_structp dummy_ptr;
-
-   DLSYM_PULL(png_get_copyright);
-   DLSYM_PULL(png_access_version_number);
-   DLSYM_PULL(png_get_header_ver);
-   DLSYM_PULL(png_get_header_version);
 
    fprintf(STDERR, "\n Testing libpng version %s\n", PNG_LIBPNG_VER_STRING);
    fprintf(STDERR, "   with zlib   version %s\n", ZLIB_VERSION);
@@ -2389,10 +2304,6 @@ main(int argc, char *argv[])
    else
       fprintf(STDERR, " libpng FAILS test\n");
 
-   DLSYM_PULL(png_get_user_width_max);
-   DLSYM_PULL(png_get_user_height_max);
-   DLSYM_PULL(png_get_chunk_cache_max);
-   DLSYM_PULL(png_get_chunk_malloc_max);
    dummy_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
    fprintf(STDERR, " Default limits:\n");
    fprintf(STDERR, "  width_max  = %lu\n",

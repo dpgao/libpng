@@ -63,7 +63,7 @@ option(PNG_DEBUG "Build with debug output" OFF)
 option(PNG_HARDWARE_OPTIMIZATIONS "Enable hardware optimizations" ON)
 
 set(PNG_PREFIX "" CACHE STRING "Prefix to add to the API function names")
-set(DFA_XTRA "${CMAKE_SOURCE_DIR}/scripts/pngusr-sandbox.dfa" CACHE FILEPATH "File containing extra configuration settings")
+set(DFA_XTRA "" CACHE FILEPATH "File containing extra configuration settings")
 
 if(PNG_HARDWARE_OPTIMIZATIONS)
 
@@ -637,7 +637,7 @@ if(PNG_TESTS AND PNG_SHARED)
   set(PNGTEST_PNG "${CMAKE_CURRENT_SOURCE_DIR}/pngtest.png")
 
   add_executable(pngtest ${pngtest_sources})
-  target_link_libraries(pngtest pmc xo)
+  target_link_libraries(pngtest png pmc xo)
 
   png_add_test(NAME pngtest
                COMMAND pngtest
