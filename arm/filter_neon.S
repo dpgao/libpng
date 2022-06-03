@@ -21,7 +21,7 @@
 #endif
 
 #ifdef __clang__
-.section __LLVM,__asm
+.section __LLVM
 #endif
 
 #ifdef PNG_READ_SUPPORTED
