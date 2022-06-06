@@ -1156,37 +1156,37 @@ test_one_file(const char *inname, const char *outname)
    user_chunk_data.info_ptr = NULL;
 #endif
 
-   pngtest_debug("Transferring info struct");
-   {
-      int interlace_type, compression_type, filter_type;
+   // pngtest_debug("Transferring info struct");
+   // {
+   //    int interlace_type, compression_type, filter_type;
 
-      if (png_get_IHDR(read_ptr, read_info_ptr, &width, &height, &bit_depth,
-          &color_type, &interlace_type, &compression_type, &filter_type) != 0)
-      {
-         png_set_IHDR(write_ptr, write_info_ptr, width, height, bit_depth,
-             color_type, interlace_type, compression_type, filter_type);
-         /* num_passes may not be available below if interlace support is not
-          * provided by libpng for both read and write.
-          */
-         switch (interlace_type)
-         {
-            case PNG_INTERLACE_NONE:
-               num_passes = 1;
-               break;
+   //    if (png_get_IHDR(read_ptr, read_info_ptr, &width, &height, &bit_depth,
+   //        &color_type, &interlace_type, &compression_type, &filter_type) != 0)
+   //    {
+   //       png_set_IHDR(write_ptr, write_info_ptr, width, height, bit_depth,
+   //           color_type, interlace_type, compression_type, filter_type);
+   //       /* num_passes may not be available below if interlace support is not
+   //        * provided by libpng for both read and write.
+   //        */
+   //       switch (interlace_type)
+   //       {
+   //          case PNG_INTERLACE_NONE:
+   //             num_passes = 1;
+   //             break;
 
-            case PNG_INTERLACE_ADAM7:
-               num_passes = 7;
-               break;
+   //          case PNG_INTERLACE_ADAM7:
+   //             num_passes = 7;
+   //             break;
 
-            default:
-               png_error(read_ptr, "invalid interlace type");
-               /*NOT REACHED*/
-         }
-      }
+   //          default:
+   //             png_error(read_ptr, "invalid interlace type");
+   //             /*NOT REACHED*/
+   //       }
+   //    }
 
-      else
-         png_error(read_ptr, "png_get_IHDR failed");
-   }
+   //    else
+   //       png_error(read_ptr, "png_get_IHDR failed");
+   // }
 #ifdef PNG_FIXED_POINT_SUPPORTED
 #ifdef PNG_cHRM_SUPPORTED
    // {
