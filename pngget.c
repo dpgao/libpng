@@ -822,11 +822,16 @@ png_get_hIST(png_const_structrp png_ptr, png_inforp info_ptr,
 #endif
 
 png_uint_32 PNGAPI
-png_get_IHDR(png_const_structrp png_ptr, png_const_inforp info_ptr,
-    png_uint_32 *width, png_uint_32 *height, int *bit_depth,
-    int *color_type, int *interlace_type, int *compression_type,
-    int *filter_type)
+png_get_IHDR(png_const_structrp png_ptr, png_const_inforp info_ptr, struct get_IHDR_args *args)
 {
+   png_uint_32 *width = args->width;
+   png_uint_32 *height = args->height;
+   int *bit_depth = args->bit_depth;
+   int *color_type = args->color_type;
+   int *interlace_type = args->interlace_type;
+   int *compression_type = arge->compression_type;
+   int *filter_type = args->filter_type;
+
    png_debug1(1, "in %s retrieval function", "IHDR");
 
    if (png_ptr == NULL || info_ptr == NULL)

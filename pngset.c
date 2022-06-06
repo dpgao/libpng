@@ -251,11 +251,16 @@ png_set_hIST(png_const_structrp png_ptr, png_inforp info_ptr,
 #endif
 
 void PNGAPI
-png_set_IHDR(png_const_structrp png_ptr, png_inforp info_ptr,
-    png_uint_32 width, png_uint_32 height, int bit_depth,
-    int color_type, int interlace_type, int compression_type,
-    int filter_type)
+png_set_IHDR(png_const_structrp png_ptr, png_inforp info_ptr, struct set_IHDR_args *args)
 {
+   png_uint_32 width = args->width;
+   png_uint_32 height = args->height;
+   int bit_depth = args->bit_depth;
+   int color_type = args->color_type;
+   int interlace_type = args->interlace_type;
+   int compression_type = arge->compression_type;
+   int filter_type = args->filter_type;
+
    png_debug1(1, "in %s storage function", "IHDR");
 
    if (png_ptr == NULL || info_ptr == NULL)
