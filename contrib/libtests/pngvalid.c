@@ -4127,8 +4127,16 @@ make_transform_image(png_store* const ps, png_byte const colour_type,
       w = transform_width(pp, colour_type, bit_depth);
       h = transform_height(pp, colour_type, bit_depth);
 
-      png_set_IHDR(pp, pi, w, h, bit_depth, colour_type, interlace_type,
-         PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+      struct set_IHDR_args set_args = {
+         .width = w,
+         .height = h,
+         .bit_depth = bit_depth,
+         .color_type = color_type,
+         .interlace_type = interlace_type,
+         .compression_type = PNG_COMPRESSION_TYPE_BASE,
+         .filter_type = PNG_FILTER_TYPE_BASE
+      };
+      png_set_IHDR(pp, pi, &set_args);
 
 #ifdef PNG_TEXT_SUPPORTED
 #  if defined(PNG_READ_zTXt_SUPPORTED) && defined(PNG_WRITE_zTXt_SUPPORTED)
@@ -4352,6 +4360,15 @@ make_size_image(png_store* const ps, png_byte const colour_type,
       if (pp == NULL)
          Throw ps;
 
+      struct set_IHDR_args set_args = {
+         .width = w,
+         .height = h,
+         .bit_depth = bit_depth,
+         .color_type = color_type,
+         .interlace_type = interlace_type,
+         .compression_type = PNG_COMPRESSION_TYPE_BASE,
+         .filter_type = PNG_FILTER_TYPE_BASE
+      };
       png_set_IHDR(pp, pi, w, h, bit_depth, colour_type, interlace_type,
          PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
@@ -4658,6 +4675,16 @@ make_error(png_store* const ps, png_byte const colour_type,
       gnu_volatile(w)
       h = transform_height(pp, colour_type, bit_depth);
       gnu_volatile(h)
+
+      struct set_IHDR_args set_args = {
+         .width = w,
+         .height = h,
+         .bit_depth = bit_depth,
+         .color_type = color_type,
+         .interlace_type = interlace_type,
+         .compression_type = PNG_COMPRESSION_TYPE_BASE,
+         .filter_type = PNG_FILTER_TYPE_BASE
+      };
       png_set_IHDR(pp, pi, w, h, bit_depth, colour_type, interlace_type,
             PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
