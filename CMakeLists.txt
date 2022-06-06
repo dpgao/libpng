@@ -63,7 +63,7 @@ option(PNG_DEBUG "Build with debug output" OFF)
 option(PNG_HARDWARE_OPTIMIZATIONS "Enable hardware optimizations" ON)
 
 set(PNG_PREFIX "" CACHE STRING "Prefix to add to the API function names")
-set(DFA_XTRA "" CACHE FILEPATH "File containing extra configuration settings")
+set(DFA_XTRA "${CMAKE_SOURCE_DIR}/scripts/pngusr-sandbox.dfa" CACHE FILEPATH "File containing extra configuration settings")
 
 if(PNG_HARDWARE_OPTIMIZATIONS)
 

@@ -1189,17 +1189,17 @@ test_one_file(const char *inname, const char *outname)
    }
 #ifdef PNG_FIXED_POINT_SUPPORTED
 #ifdef PNG_cHRM_SUPPORTED
-   {
-      png_fixed_point white_x, white_y, red_x, red_y, green_x, green_y, blue_x,
-          blue_y;
+   // {
+   //    png_fixed_point white_x, white_y, red_x, red_y, green_x, green_y, blue_x,
+   //        blue_y;
 
-      if (png_get_cHRM_fixed(read_ptr, read_info_ptr, &white_x, &white_y,
-          &red_x, &red_y, &green_x, &green_y, &blue_x, &blue_y) != 0)
-      {
-         png_set_cHRM_fixed(write_ptr, write_info_ptr, white_x, white_y, red_x,
-             red_y, green_x, green_y, blue_x, blue_y);
-      }
-   }
+   //    if (png_get_cHRM_fixed(read_ptr, read_info_ptr, &white_x, &white_y,
+   //        &red_x, &red_y, &green_x, &green_y, &blue_x, &blue_y) != 0)
+   //    {
+   //       png_set_cHRM_fixed(write_ptr, write_info_ptr, white_x, white_y, red_x,
+   //           red_y, green_x, green_y, blue_x, blue_y);
+   //    }
+   // }
 #endif
 #ifdef PNG_gAMA_SUPPORTED
    {
@@ -1212,17 +1212,17 @@ test_one_file(const char *inname, const char *outname)
 #else /* Use floating point versions */
 #ifdef PNG_FLOATING_POINT_SUPPORTED
 #ifdef PNG_cHRM_SUPPORTED
-   {
-      double white_x, white_y, red_x, red_y, green_x, green_y, blue_x,
-          blue_y;
+   // {
+   //    double white_x, white_y, red_x, red_y, green_x, green_y, blue_x,
+   //        blue_y;
 
-      if (png_get_cHRM(read_ptr, read_info_ptr, &white_x, &white_y, &red_x,
-          &red_y, &green_x, &green_y, &blue_x, &blue_y) != 0)
-      {
-         png_set_cHRM(write_ptr, write_info_ptr, white_x, white_y, red_x,
-             red_y, green_x, green_y, blue_x, blue_y);
-      }
-   }
+   //    if (png_get_cHRM(read_ptr, read_info_ptr, &white_x, &white_y, &red_x,
+   //        &red_y, &green_x, &green_y, &blue_x, &blue_y) != 0)
+   //    {
+   //       png_set_cHRM(write_ptr, write_info_ptr, white_x, white_y, red_x,
+   //           red_y, green_x, green_y, blue_x, blue_y);
+   //    }
+   // }
 #endif
 #ifdef PNG_gAMA_SUPPORTED
    {
@@ -1311,19 +1311,19 @@ test_one_file(const char *inname, const char *outname)
    }
 #endif
 #ifdef PNG_pCAL_SUPPORTED
-   {
-      png_charp purpose, units;
-      png_charpp params;
-      png_int_32 X0, X1;
-      int type, nparams;
+   // {
+   //    png_charp purpose, units;
+   //    png_charpp params;
+   //    png_int_32 X0, X1;
+   //    int type, nparams;
 
-      if (png_get_pCAL(read_ptr, read_info_ptr, &purpose, &X0, &X1, &type,
-          &nparams, &units, &params) != 0)
-      {
-         png_set_pCAL(write_ptr, write_info_ptr, purpose, X0, X1, type,
-             nparams, units, params);
-      }
-   }
+   //    if (png_get_pCAL(read_ptr, read_info_ptr, &purpose, &X0, &X1, &type,
+   //        &nparams, &units, &params) != 0)
+   //    {
+   //       png_set_pCAL(write_ptr, write_info_ptr, purpose, X0, X1, type,
+   //           nparams, units, params);
+   //    }
+   // }
 #endif
 #ifdef PNG_pHYs_SUPPORTED
    {
