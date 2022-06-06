@@ -954,8 +954,8 @@ update_display(struct display *dp)
       .height = &dp->height,
       .bit_depth = &dp->bit_depth,
       .color_type = &dp->color_type,
-      .interlace_type = &dp->interlace_type,
-      .compression_type = &dp->compression_type,
+      .interlace_type = &dp->interlace_method,
+      .compression_type = &dp->compression_method,
       .filter_type = &dp->filter_method
    };
    if (!png_get_IHDR(pp, ip, &get_args))
@@ -1018,8 +1018,8 @@ compare_read(struct display *dp, int applied_transforms)
       .height = &height,
       .bit_depth = &bit_depth,
       .color_type = &color_type,
-      .interlace_type = &interlace_type,
-      .compression_type = &compression_type,
+      .interlace_type = &interlace_method,
+      .compression_type = &compression_method,
       .filter_type = &filter_method
    };
    if (!png_get_IHDR(dp->read_pp, dp->read_ip, &get_args))
@@ -1381,8 +1381,8 @@ write_png(struct display *dp, png_infop ip, int transforms)
          .height = &dp->height,
          .bit_depth = &dp->bit_depth,
          .color_type = &ct,
-         .interlace_type = &dp->interlace_type,
-         .compression_type = &dp->compression_type,
+         .interlace_type = &dp->interlace_method,
+         .compression_type = &dp->compression_method,
          .filter_type = &dp->filter_method
       };
       png_set_IHDR(dp->write_pp, ip, &get_args);
