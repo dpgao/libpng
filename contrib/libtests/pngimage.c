@@ -949,9 +949,16 @@ update_display(struct display *dp)
    if (dp->original_rows == NULL)
       display_log(dp, LIBPNG_BUG, "png_read_png did not create row buffers");
 
-   if (!png_get_IHDR(pp, ip,
-      &dp->width, &dp->height, &dp->bit_depth, &dp->color_type,
-      &dp->interlace_method, &dp->compression_method, &dp->filter_method))
+   struct get_IHDR_args get_args = {
+      .width = &dp->width,
+      .height = &dp->height,
+      .bit_depth = &dp->bit_depth,
+      .color_type = &dp->color_type,
+      .interlace_type = &dp->interlace_type,
+      .compression_type = &dp->compression_type,
+      .filter_type = &dp->filter_method
+   };
+   if (!png_get_IHDR(pp, ip, &get_args))
       display_log(dp, LIBPNG_BUG, "png_get_IHDR failed");
 
    /* 'active' transforms are discovered based on the original image format;
@@ -1006,8 +1013,16 @@ compare_read(struct display *dp, int applied_transforms)
    int interlace_method, compression_method, filter_method;
    const char *e = NULL;
 
-   if (!png_get_IHDR(dp->read_pp, dp->read_ip, &width, &height, &bit_depth,
-      &color_type, &interlace_method, &compression_method, &filter_method))
+   struct get_IHDR_args get_args = {
+      .width = &width,
+      .height = &height,
+      .bit_depth = &bit_depth,
+      .color_type = &color_type,
+      .interlace_type = &interlace_type,
+      .compression_type = &compression_type,
+      .filter_type = &filter_method
+   };
+   if (!png_get_IHDR(dp->read_pp, dp->read_ip, &get_args))
       display_log(dp, LIBPNG_BUG, "png_get_IHDR failed");
 
 #  define C(item) if (item != dp->item) \
@@ -1361,8 +1376,16 @@ write_png(struct display *dp, png_infop ip, int transforms)
                         PNG_TRANSFORM_STRIP_FILLER_BEFORE))
          ct &= ~PNG_COLOR_MASK_ALPHA;
 
-      png_set_IHDR(dp->write_pp, ip, dp->width, dp->height, dp->bit_depth, ct,
-         dp->interlace_method, dp->compression_method, dp->filter_method);
+      struct get_IHDR_args get_args = {
+         .width = &dp->width,
+         .height = &dp->height,
+         .bit_depth = &dp->bit_depth,
+         .color_type = &ct,
+         .interlace_type = &dp->interlace_type,
+         .compression_type = &dp->compression_type,
+         .filter_type = &dp->filter_method
+      };
+      png_set_IHDR(dp->write_pp, ip, &get_args);
    }
 
    png_write_png(dp->write_pp, ip, transforms, NULL/*params*/);
