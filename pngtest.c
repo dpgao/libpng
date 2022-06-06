@@ -1169,7 +1169,7 @@ test_one_file(const char *inname, const char *outname)
          .compression_type = &compression_type,
          .filter_type = &filter_type
       };
-      if (png_get_IHDR(read_ptr, read_info_ptr, get_args) != 0)
+      if (png_get_IHDR(read_ptr, read_info_ptr, &get_args) != 0)
       {
          struct set_IHDR_args set_args = {
              .width = width,
@@ -1180,7 +1180,7 @@ test_one_file(const char *inname, const char *outname)
              .compression_type = compression_type,
              .filter_type = filter_type
          };
-         png_set_IHDR(write_ptr, write_info_ptr, set_args);
+         png_set_IHDR(write_ptr, write_info_ptr, &set_args);
          /* num_passes may not be available below if interlace support is not
           * provided by libpng for both read and write.
           */
