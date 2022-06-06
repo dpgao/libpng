@@ -1376,14 +1376,14 @@ write_png(struct display *dp, png_infop ip, int transforms)
                         PNG_TRANSFORM_STRIP_FILLER_BEFORE))
          ct &= ~PNG_COLOR_MASK_ALPHA;
 
-      struct get_IHDR_args get_args = {
-         .width = &dp->width,
-         .height = &dp->height,
-         .bit_depth = &dp->bit_depth,
-         .color_type = &ct,
-         .interlace_type = &dp->interlace_method,
-         .compression_type = &dp->compression_method,
-         .filter_type = &dp->filter_method
+      struct get_IHDR_args set_args = {
+         .width = dp->width,
+         .height = dp->height,
+         .bit_depth = dp->bit_depth,
+         .color_type = ct,
+         .interlace_type = dp->interlace_method,
+         .compression_type = dp->compression_method,
+         .filter_type = dp->filter_method
       };
       png_set_IHDR(dp->write_pp, ip, &get_args);
    }
