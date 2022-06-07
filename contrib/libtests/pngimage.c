@@ -949,17 +949,14 @@ update_display(struct display *dp)
    if (dp->original_rows == NULL)
       display_log(dp, LIBPNG_BUG, "png_read_png did not create row buffers");
 
-   struct get_IHDR_args get_args = {
-      .width = &dp->width,
-      .height = &dp->height,
-      .bit_depth = &dp->bit_depth,
-      .color_type = &dp->color_type,
-      .interlace_type = &dp->interlace_method,
-      .compression_type = &dp->compression_method,
-      .filter_type = &dp->filter_method
-   };
-   if (!png_get_IHDR(pp, ip, &get_args))
+   struct IHDR_args args;
+   if (!png_get_IHDR(pp, ip,
+      &dp->width, &dp->height, &dp->bit_depth, &dp->color_type,
+      &args))
       display_log(dp, LIBPNG_BUG, "png_get_IHDR failed");
+   dp->interlace_method = args.interlace_type;
+   dp->compression_method = args.compression_type;
+   dp->filter_method = args.filter_method;
 
    /* 'active' transforms are discovered based on the original image format;
     * running one active transform can activate others.  At present the code
@@ -1010,19 +1007,11 @@ compare_read(struct display *dp, int applied_transforms)
    size_t rowbytes;
    png_uint_32 width, height;
    int bit_depth, color_type;
-   int interlace_method, compression_method, filter_method;
    const char *e = NULL;
 
-   struct get_IHDR_args get_args = {
-      .width = &width,
-      .height = &height,
-      .bit_depth = &bit_depth,
-      .color_type = &color_type,
-      .interlace_type = &interlace_method,
-      .compression_type = &compression_method,
-      .filter_type = &filter_method
-   };
-   if (!png_get_IHDR(dp->read_pp, dp->read_ip, &get_args))
+   struct IHDR_args args;
+   if (!png_get_IHDR(dp->read_pp, dp->read_ip, &width, &height, &bit_depth,
+      &color_type, &args))
       display_log(dp, LIBPNG_BUG, "png_get_IHDR failed");
 
 #  define C(item) if (item != dp->item) \
@@ -1034,9 +1023,9 @@ compare_read(struct display *dp, int applied_transforms)
    C(height);
    C(bit_depth);
    C(color_type);
-   C(interlace_method);
-   C(compression_method);
-   C(filter_method);
+   C(dp.interlace_type);
+   C(dp.compression_type);
+   C(dp.filter_type);
 
    /* 'e' remains set to the name of the last thing changed: */
    if (e)
@@ -1376,16 +1365,8 @@ write_png(struct display *dp, png_infop ip, int transforms)
                         PNG_TRANSFORM_STRIP_FILLER_BEFORE))
          ct &= ~PNG_COLOR_MASK_ALPHA;
 
-      struct set_IHDR_args set_args = {
-         .width = dp->width,
-         .height = dp->height,
-         .bit_depth = dp->bit_depth,
-         .color_type = ct,
-         .interlace_type = dp->interlace_method,
-         .compression_type = dp->compression_method,
-         .filter_type = dp->filter_method
-      };
-      png_set_IHDR(dp->write_pp, ip, &set_args);
+      png_set_IHDR(dp->write_pp, ip, dp->width, dp->height, dp->bit_depth, ct,
+         &(struct IHDR_args) { dp->interlace_method, dp->compression_method, dp->filter_method });
    }
 
    png_write_png(dp->write_pp, ip, transforms, NULL/*params*/);
