@@ -1940,12 +1940,13 @@ PNG_FP_EXPORT(230, png_uint_32, png_get_cHRM_XYZ, (png_const_structrp png_ptr,
     png_const_inforp info_ptr, double *red_X, double *red_Y, double *red_Z,
     double *green_X, double *green_Y, double *green_Z, double *blue_X,
     double *blue_Y, double *blue_Z))
+
+struct cHRM_fixed_args {
+    png_fixed_point white_x, white_y, red_x, red_y, green_x, green_y, blue_x, blue_y;
+};
 PNG_FIXED_EXPORT(134, png_uint_32, png_get_cHRM_fixed,
     (png_const_structrp png_ptr, png_const_inforp info_ptr,
-    png_fixed_point *int_white_x, png_fixed_point *int_white_y,
-    png_fixed_point *int_red_x, png_fixed_point *int_red_y,
-    png_fixed_point *int_green_x, png_fixed_point *int_green_y,
-    png_fixed_point *int_blue_x, png_fixed_point *int_blue_y))
+    struct cHRM_fixed_args *))
 PNG_FIXED_EXPORT(231, png_uint_32, png_get_cHRM_XYZ_fixed,
     (png_const_structrp png_ptr, png_const_inforp info_ptr,
     png_fixed_point *int_red_X, png_fixed_point *int_red_Y,
@@ -1965,11 +1966,7 @@ PNG_FP_EXPORT(232, void, png_set_cHRM_XYZ, (png_const_structrp png_ptr,
     double green_X, double green_Y, double green_Z, double blue_X,
     double blue_Y, double blue_Z))
 PNG_FIXED_EXPORT(136, void, png_set_cHRM_fixed, (png_const_structrp png_ptr,
-    png_inforp info_ptr, png_fixed_point int_white_x,
-    png_fixed_point int_white_y, png_fixed_point int_red_x,
-    png_fixed_point int_red_y, png_fixed_point int_green_x,
-    png_fixed_point int_green_y, png_fixed_point int_blue_x,
-    png_fixed_point int_blue_y))
+    png_inforp info_ptr, struct cHRM_fixed_args *))
 PNG_FIXED_EXPORT(233, void, png_set_cHRM_XYZ_fixed, (png_const_structrp png_ptr,
     png_inforp info_ptr, png_fixed_point int_red_X, png_fixed_point int_red_Y,
     png_fixed_point int_red_Z, png_fixed_point int_green_X,

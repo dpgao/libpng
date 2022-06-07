@@ -1205,17 +1205,14 @@ test_one_file(const char *inname, const char *outname)
    }
 #ifdef PNG_FIXED_POINT_SUPPORTED
 #ifdef PNG_cHRM_SUPPORTED
-   // {
-   //    png_fixed_point white_x, white_y, red_x, red_y, green_x, green_y, blue_x,
-   //        blue_y;
+   {
+      struct cHRM_fixed_args args;
 
-   //    if (png_get_cHRM_fixed(read_ptr, read_info_ptr, &white_x, &white_y,
-   //        &red_x, &red_y, &green_x, &green_y, &blue_x, &blue_y) != 0)
-   //    {
-   //       png_set_cHRM_fixed(write_ptr, write_info_ptr, white_x, white_y, red_x,
-   //           red_y, green_x, green_y, blue_x, blue_y);
-   //    }
-   // }
+      if (png_get_cHRM_fixed(read_ptr, read_info_ptr, &args) != 0)
+      {
+         png_set_cHRM_fixed(write_ptr, write_info_ptr, &args);
+      }
+   }
 #endif
 #ifdef PNG_gAMA_SUPPORTED
    {
@@ -1228,17 +1225,17 @@ test_one_file(const char *inname, const char *outname)
 #else /* Use floating point versions */
 #ifdef PNG_FLOATING_POINT_SUPPORTED
 #ifdef PNG_cHRM_SUPPORTED
-   // {
-   //    double white_x, white_y, red_x, red_y, green_x, green_y, blue_x,
-   //        blue_y;
+   {
+      double white_x, white_y, red_x, red_y, green_x, green_y, blue_x,
+          blue_y;
 
-   //    if (png_get_cHRM(read_ptr, read_info_ptr, &white_x, &white_y, &red_x,
-   //        &red_y, &green_x, &green_y, &blue_x, &blue_y) != 0)
-   //    {
-   //       png_set_cHRM(write_ptr, write_info_ptr, white_x, white_y, red_x,
-   //           red_y, green_x, green_y, blue_x, blue_y);
-   //    }
-   // }
+      if (png_get_cHRM(read_ptr, read_info_ptr, &white_x, &white_y, &red_x,
+          &red_y, &green_x, &green_y, &blue_x, &blue_y) != 0)
+      {
+         png_set_cHRM(write_ptr, write_info_ptr, white_x, white_y, red_x,
+             red_y, green_x, green_y, blue_x, blue_y);
+      }
+   }
 #endif
 #ifdef PNG_gAMA_SUPPORTED
    {

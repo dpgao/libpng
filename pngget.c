@@ -638,11 +638,17 @@ png_get_cHRM_XYZ_fixed(png_const_structrp png_ptr, png_const_inforp info_ptr,
 }
 
 png_uint_32 PNGAPI
-png_get_cHRM_fixed(png_const_structrp png_ptr, png_const_inforp info_ptr,
-    png_fixed_point *white_x, png_fixed_point *white_y, png_fixed_point *red_x,
-    png_fixed_point *red_y, png_fixed_point *green_x, png_fixed_point *green_y,
-    png_fixed_point *blue_x, png_fixed_point *blue_y)
+png_get_cHRM_fixed(png_const_structrp png_ptr, png_const_inforp info_ptr, struct cHRM_fixed_args *args)
 {
+   png_fixed_point *white_x = &args->white_x;
+   png_fixed_point *white_y = &args->white_y;
+   png_fixed_point *red_x = &args->red_x;
+   png_fixed_point *red_y = &args->red_y;
+   png_fixed_point *green_x = &args->green_x;
+   png_fixed_point *green_y = &args->green_y;
+   png_fixed_point *blue_x = &args->blue_x;
+   png_fixed_point *blue_y = &args->blue_y;
+
    png_debug1(1, "in %s retrieval function", "cHRM");
 
    if (png_ptr != NULL && info_ptr != NULL &&
@@ -829,7 +835,7 @@ png_get_IHDR(png_const_structrp png_ptr, png_const_inforp info_ptr, struct get_I
    int *bit_depth = args->bit_depth;
    int *color_type = args->color_type;
    int *interlace_type = args->interlace_type;
-   int *compression_type = arge->compression_type;
+   int *compression_type = args->compression_type;
    int *filter_type = args->filter_type;
 
    png_debug1(1, "in %s retrieval function", "IHDR");

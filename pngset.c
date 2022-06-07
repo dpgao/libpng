@@ -38,10 +38,17 @@ png_set_bKGD(png_const_structrp png_ptr, png_inforp info_ptr,
 #ifdef PNG_cHRM_SUPPORTED
 void PNGFAPI
 png_set_cHRM_fixed(png_const_structrp png_ptr, png_inforp info_ptr,
-    png_fixed_point white_x, png_fixed_point white_y, png_fixed_point red_x,
-    png_fixed_point red_y, png_fixed_point green_x, png_fixed_point green_y,
-    png_fixed_point blue_x, png_fixed_point blue_y)
+    struct cHRM_fixed_args *args)
 {
+   png_fixed_point white_x = args->white_x;
+   png_fixed_point white_y = args->white_y;
+   png_fixed_point red_x = args->red_x;
+   png_fixed_point red_y = args->red_y;
+   png_fixed_point green_x = args->green_x;
+   png_fixed_point green_y = args->green_y;
+   png_fixed_point blue_x = args->blue_x;
+   png_fixed_point blue_y = args->blue_y;
+
    png_xy xy;
 
    png_debug1(1, "in %s storage function", "cHRM fixed");
