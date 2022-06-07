@@ -2360,8 +2360,8 @@ png_handle_pCAL(png_structrp png_ptr, png_inforp info_ptr, png_uint_32 length)
       }
    }
 
-   png_set_pCAL(png_ptr, info_ptr, (png_charp)buffer, X0, X1, type, nparams,
-       (png_charp)units, params);
+   png_set_pCAL(png_ptr, info_ptr, &(struct pCAL_args) { (png_charp)buffer, X0, X1, type, nparams,
+       (png_charp)units, params });
 
    png_free(png_ptr, params);
 }
