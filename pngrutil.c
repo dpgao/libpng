@@ -903,17 +903,8 @@ png_handle_IHDR(png_structrp png_ptr, png_inforp info_ptr, png_uint_32 length)
    png_debug1(3, "bit_depth = %d", png_ptr->bit_depth);
    png_debug1(3, "channels = %d", png_ptr->channels);
    png_debug1(3, "rowbytes = %lu", (unsigned long)png_ptr->rowbytes);
-
-   struct set_IHDR_args set_args = {
-      .width = width,
-      .height = height,
-      .bit_depth = bit_depth,
-      .color_type = color_type,
-      .interlace_type = interlace_type,
-      .compression_type = compression_type,
-      .filter_type = filter_type
-   };
-   png_set_IHDR(png_ptr, info_ptr, &set_args);
+   png_set_IHDR(png_ptr, info_ptr, width, height, bit_depth,
+       color_type, &(struct IHDR_args) { interlace_type, compression_type, filter_type });
 }
 
 /* Read and check the palette */

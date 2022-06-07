@@ -1313,8 +1313,7 @@ test_one_file(const char *inname, const char *outname)
 
       if (png_get_pCAL(read_ptr, read_info_ptr, &args) != 0)
       {
-         png_set_pCAL(write_ptr, write_info_ptr, purpose, X0, X1, type,
-             nparams, units, params);
+         png_set_pCAL(write_ptr, write_info_ptr, &args);
       }
    }
 #endif

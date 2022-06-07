@@ -2010,7 +2010,7 @@ PNG_EXPORT(142, void, png_set_hIST, (png_const_structrp png_ptr,
 #endif
 
 struct IHDR_args {
-    int *interlace_type, *compression_type, *filter_type;
+    int interlace_type, compression_type, filter_type;
 };
 
 PNG_EXPORT(143, png_uint_32, png_get_IHDR, (png_const_structrp png_ptr,
