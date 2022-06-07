@@ -1007,12 +1007,16 @@ compare_read(struct display *dp, int applied_transforms)
    size_t rowbytes;
    png_uint_32 width, height;
    int bit_depth, color_type;
+   int interlace_method, compression_method, filter_method;
    const char *e = NULL;
 
    struct IHDR_args args;
    if (!png_get_IHDR(dp->read_pp, dp->read_ip, &width, &height, &bit_depth,
       &color_type, &args))
       display_log(dp, LIBPNG_BUG, "png_get_IHDR failed");
+   interlace_method = args.interlace_type;
+   compression_method = args.compression_type;
+   filter_method = args.filter_type;
 
 #  define C(item) if (item != dp->item) \
       display_log(dp, APP_WARNING, "IHDR " #item "(%lu) changed to %lu",\
@@ -1023,9 +1027,9 @@ compare_read(struct display *dp, int applied_transforms)
    C(height);
    C(bit_depth);
    C(color_type);
-   C(args.interlace_type);
-   C(args.compression_type);
-   C(args.filter_type);
+   C(interlace_method);
+   C(compression_method);
+   C(filter_method);
 
    /* 'e' remains set to the name of the last thing changed: */
    if (e)
