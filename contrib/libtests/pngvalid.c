@@ -4127,16 +4127,8 @@ make_transform_image(png_store* const ps, png_byte const colour_type,
       w = transform_width(pp, colour_type, bit_depth);
       h = transform_height(pp, colour_type, bit_depth);
 
-      struct set_IHDR_args set_args = {
-         .width = w,
-         .height = h,
-         .bit_depth = bit_depth,
-         .color_type = colour_type,
-         .interlace_type = interlace_type,
-         .compression_type = PNG_COMPRESSION_TYPE_BASE,
-         .filter_type = PNG_FILTER_TYPE_BASE
-      };
-      png_set_IHDR(pp, pi, &set_args);
+      png_set_IHDR(pp, pi, w, h, bit_depth, colour_type, &(struct IHDR_args) { interlace_type,
+         PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE });
 
 #ifdef PNG_TEXT_SUPPORTED
 #  if defined(PNG_READ_zTXt_SUPPORTED) && defined(PNG_WRITE_zTXt_SUPPORTED)
@@ -4360,16 +4352,8 @@ make_size_image(png_store* const ps, png_byte const colour_type,
       if (pp == NULL)
          Throw ps;
 
-      struct set_IHDR_args set_args = {
-         .width = w,
-         .height = h,
-         .bit_depth = bit_depth,
-         .color_type = colour_type,
-         .interlace_type = interlace_type,
-         .compression_type = PNG_COMPRESSION_TYPE_BASE,
-         .filter_type = PNG_FILTER_TYPE_BASE
-      };
-      png_set_IHDR(pp, pi, &set_args);
+      png_set_IHDR(pp, pi, w, h, bit_depth, colour_type, &(struct IHDR_args) { interlace_type,
+         PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE });
 
 #ifdef PNG_TEXT_SUPPORTED
       {
@@ -4674,17 +4658,8 @@ make_error(png_store* const ps, png_byte const colour_type,
       gnu_volatile(w)
       h = transform_height(pp, colour_type, bit_depth);
       gnu_volatile(h)
-
-      struct set_IHDR_args set_args = {
-         .width = w,
-         .height = h,
-         .bit_depth = bit_depth,
-         .color_type = colour_type,
-         .interlace_type = interlace_type,
-         .compression_type = PNG_COMPRESSION_TYPE_BASE,
-         .filter_type = PNG_FILTER_TYPE_BASE
-      };
-      png_set_IHDR(pp, pi, &set_args);
+      png_set_IHDR(pp, pi, w, h, bit_depth, colour_type, &(struct IHDR_args) { interlace_type,
+            PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE });
 
       if (colour_type == 3) /* palette */
          init_standard_palette(ps, pp, pi, 1U << bit_depth, 0/*do tRNS*/);

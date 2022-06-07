@@ -259,12 +259,10 @@ png_set_hIST(png_const_structrp png_ptr, png_inforp info_ptr,
 #endif
 
 void PNGAPI
-png_set_IHDR(png_const_structrp png_ptr, png_inforp info_ptr, struct set_IHDR_args *args)
+png_set_IHDR(png_const_structrp png_ptr, png_inforp info_ptr,
+    png_uint_32 width, png_uint_32 height, int bit_depth,
+    int color_type, struct IHDR_args *args)
 {
-   png_uint_32 width = args->width;
-   png_uint_32 height = args->height;
-   int bit_depth = args->bit_depth;
-   int color_type = args->color_type;
    int interlace_type = args->interlace_type;
    int compression_type = args->compression_type;
    int filter_type = args->filter_type;
@@ -322,10 +320,16 @@ png_set_oFFs(png_const_structrp png_ptr, png_inforp info_ptr,
 
 #ifdef PNG_pCAL_SUPPORTED
 void PNGAPI
-png_set_pCAL(png_const_structrp png_ptr, png_inforp info_ptr,
-    png_const_charp purpose, png_int_32 X0, png_int_32 X1, int type,
-    int nparams, png_const_charp units, png_charpp params)
+png_set_pCAL(png_const_structrp png_ptr, png_inforp info_ptr, struct pCAL_args *args)
 {
+   png_charp purpose = args->purpose;
+   png_int_32 X0 = args->X0;
+   png_int_32 X1 = args->X1;
+   int type = args->type;
+   int nparams = args->nparams;
+   png_charp units = args->units;
+   png_charpp params = args->params;
+
    size_t length;
    int i;
 

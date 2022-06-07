@@ -1158,29 +1158,13 @@ test_one_file(const char *inname, const char *outname)
 
    pngtest_debug("Transferring info struct");
    {
-      int interlace_type, compression_type, filter_type;
+      struct IHDR_args args;
 
-      struct get_IHDR_args get_args = {
-         .width = &width,
-         .height = &height,
-         .bit_depth = &bit_depth,
-         .color_type = &color_type,
-         .interlace_type = &interlace_type,
-         .compression_type = &compression_type,
-         .filter_type = &filter_type
-      };
-      if (png_get_IHDR(read_ptr, read_info_ptr, &get_args) != 0)
+      if (png_get_IHDR(read_ptr, read_info_ptr, &width, &height, &bit_depth,
+          &color_type, &args) != 0)
       {
-         struct set_IHDR_args set_args = {
-             .width = width,
-             .height = height,
-             .bit_depth = bit_depth,
-             .color_type = color_type,
-             .interlace_type = interlace_type,
-             .compression_type = compression_type,
-             .filter_type = filter_type
-         };
-         png_set_IHDR(write_ptr, write_info_ptr, &set_args);
+         png_set_IHDR(write_ptr, write_info_ptr, width, height, bit_depth,
+             color_type, &args);
          /* num_passes may not be available below if interlace support is not
           * provided by libpng for both read and write.
           */
@@ -1324,19 +1308,15 @@ test_one_file(const char *inname, const char *outname)
    }
 #endif
 #ifdef PNG_pCAL_SUPPORTED
-   // {
-   //    png_charp purpose, units;
-   //    png_charpp params;
-   //    png_int_32 X0, X1;
-   //    int type, nparams;
+   {
+      struct pCAL_args args;
 
-   //    if (png_get_pCAL(read_ptr, read_info_ptr, &purpose, &X0, &X1, &type,
-   //        &nparams, &units, &params) != 0)
-   //    {
-   //       png_set_pCAL(write_ptr, write_info_ptr, purpose, X0, X1, type,
-   //           nparams, units, params);
-   //    }
-   // }
+      if (png_get_pCAL(read_ptr, read_info_ptr, &args) != 0)
+      {
+         png_set_pCAL(write_ptr, write_info_ptr, purpose, X0, X1, type,
+             nparams, units, params);
+      }
+   }
 #endif
 #ifdef PNG_pHYs_SUPPORTED
    {

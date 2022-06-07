@@ -2009,27 +2009,17 @@ PNG_EXPORT(142, void, png_set_hIST, (png_const_structrp png_ptr,
     png_inforp info_ptr, png_const_uint_16p hist));
 #endif
 
-struct get_IHDR_args {
-    png_uint_32 *width, *height;
-    int *bit_depth, *color_type, *interlace_type, *compression_type, *filter_type;
+struct IHDR_args {
+    int *interlace_type, *compression_type, *filter_type;
 };
 
 PNG_EXPORT(143, png_uint_32, png_get_IHDR, (png_const_structrp png_ptr,
-    png_const_inforp info_ptr, struct get_IHDR_args *));
-    // png_uint_32 *width, png_uint_32 *height,
-    // int *bit_depth, int *color_type, int *interlace_method,
-    // int *compression_method, int *filter_method));
-
-struct set_IHDR_args {
-    png_uint_32 width, height;
-    int bit_depth, color_type, interlace_type, compression_type, filter_type;
-};
+    png_const_inforp info_ptr, png_uint_32 *width, png_uint_32 *height,
+    int *bit_depth, int *color_type, struct IHDR_args *));
 
 PNG_EXPORT(144, void, png_set_IHDR, (png_const_structrp png_ptr,
-    png_inforp info_ptr, struct set_IHDR_args *));
-    // png_uint_32 width, png_uint_32 height, int bit_depth,
-    // int color_type, int interlace_method, int compression_method,
-    // int filter_method));
+    png_inforp info_ptr, png_uint_32 width, png_uint_32 height, int bit_depth,
+    int color_type, struct IHDR_args *));
 
 #ifdef PNG_oFFs_SUPPORTED
 PNG_EXPORT(145, png_uint_32, png_get_oFFs, (png_const_structrp png_ptr,
@@ -2044,16 +2034,19 @@ PNG_EXPORT(146, void, png_set_oFFs, (png_const_structrp png_ptr,
 #endif
 
 #ifdef PNG_pCAL_SUPPORTED
+struct pCAL_args {
+    png_charp purpose, units;
+    png_charpp params;
+    png_int_32 X0, X1;
+    int type, nparams;
+};
 PNG_EXPORT(147, png_uint_32, png_get_pCAL, (png_const_structrp png_ptr,
-    png_inforp info_ptr, png_charp *purpose, png_int_32 *X0,
-    png_int_32 *X1, int *type, int *nparams, png_charp *units,
-    png_charpp *params));
+    png_inforp info_ptr, struct pCAL_args *));
 #endif
 
 #ifdef PNG_pCAL_SUPPORTED
 PNG_EXPORT(148, void, png_set_pCAL, (png_const_structrp png_ptr,
-    png_inforp info_ptr, png_const_charp purpose, png_int_32 X0, png_int_32 X1,
-    int type, int nparams, png_const_charp units, png_charpp params));
+    png_inforp info_ptr, struct pCAL_args *));
 #endif
 
 #ifdef PNG_pHYs_SUPPORTED
