@@ -1168,7 +1168,7 @@ test_one_file(const char *inname, const char *outname)
          /* num_passes may not be available below if interlace support is not
           * provided by libpng for both read and write.
           */
-         switch (interlace_type)
+         switch (args->interlace_type)
          {
             case PNG_INTERLACE_NONE:
                num_passes = 1;
