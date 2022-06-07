@@ -1023,9 +1023,9 @@ compare_read(struct display *dp, int applied_transforms)
    C(height);
    C(bit_depth);
    C(color_type);
-   C(dp.interlace_type);
-   C(dp.compression_type);
-   C(dp.filter_type);
+   C(args.interlace_type);
+   C(args.compression_type);
+   C(args.filter_type);
 
    /* 'e' remains set to the name of the last thing changed: */
    if (e)
