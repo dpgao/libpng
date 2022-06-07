@@ -956,7 +956,7 @@ update_display(struct display *dp)
       display_log(dp, LIBPNG_BUG, "png_get_IHDR failed");
    dp->interlace_method = args.interlace_type;
    dp->compression_method = args.compression_type;
-   dp->filter_method = args.filter_method;
+   dp->filter_method = args.filter_type;
 
    /* 'active' transforms are discovered based on the original image format;
     * running one active transform can activate others.  At present the code
