@@ -1896,10 +1896,8 @@ benchmark_test_one_file(const char *inname, const char *outname)
       pmc_setup_run();
       pmc_begin();
 
-      /* Run the tests in a loop */
-//      for (unsigned inner_it_no = 0; inner_it_no < NO_INNER_ITERATIONS; ++inner_it_no) {
-         int kerror = test_one_file(inname, outname);
-//      }
+      /* Run the tests */
+      int kerror = test_one_file(inname, outname);
 
       /* Read counter values */
       for (unsigned counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
@@ -1925,24 +1923,12 @@ benchmark_test_one_file(const char *inname, const char *outname)
    xo_open_container("pngtest");
 #endif
 
-   xo_emit("{Lwc:Outer iterations}{:outer-iterations/%u}", NO_OUTER_ITERATIONS);
-   xo_emit("{Lwc:Inner iterations}{:inner-iterations/%u}", NO_INNER_ITERATIONS);
-
-   xo_open_list("libraries");
-   xo_open_instance("libraries");
-   xo_emit("{Lwc:Library path}{:library-path/%s}\n", "libpng16.so.16");
    for (unsigned counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
       xo_open_list(counter_set[counter_index]);
-      for (unsigned i = 0; i < NO_OUTER_ITERATIONS; ++i) {
-         const char *const fmt = "{Lwc:%s}{l:%s/%cU}\n";
-         char fmt_buf[50];
-         sprintf(fmt_buf, fmt, counter_set[counter_index], counter_set[counter_index], '%');
-         xo_emit(fmt_buf, pmc_values[counter_index][i]);
-      }
+      for (unsigned i = 0; i < NO_OUTER_ITERATIONS; ++i)
+         xo_emit("{la:/%U}\n", counter_set[counter_index], pmc_values[counter_index][i]);
       xo_close_list(counter_set[counter_index]);
    }
-   xo_close_instance("libraries");
-   xo_close_list("libraries");
 
 #ifdef SANDBOX
    xo_close_container("pngtest-sandbox");
