@@ -60,7 +60,6 @@ static const char *counter_set[] = {
         "L1D_CACHE_REFILL"
 };
 
-#define NO_INNER_ITERATIONS  (1U)
 #define NO_OUTER_ITERATIONS  (1000U)
 
 static pmc_id_t pmcids[NUM_COUNTERS];
@@ -70,14 +69,11 @@ static void
 pmc_setup_run(void)
 {
   for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
-    if (pmc_allocate(counter_set[counter_index], PMC_MODE_TC, 0, PMC_CPU_ANY, &pmcids[counter_index], 64 * 1024) < 0) {
+    if (pmc_allocate(counter_set[counter_index], PMC_MODE_TC, 0, PMC_CPU_ANY, &pmcids[counter_index], 0) < 0) {
       xo_err(EX_OSERR, "FAIL: pmc_allocate (%s) for %s", strerror(errno), counter_set[counter_index]);
     }
     if (pmc_attach(pmcids[counter_index], 0) < 0) {
       xo_err(EX_OSERR, "FAIL: pmc_attach (%s) for %s", strerror(errno), counter_set[counter_index]);
-    }
-    if (pmc_write(pmcids[counter_index], 0) < 0) {
-      xo_err(EX_OSERR, "FAIL: pmc_write (%s) for %s", strerror(errno), counter_set[counter_index]);
     }
   }
 }
@@ -99,6 +95,9 @@ static __inline void
 pmc_begin(void)
 {
   for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
+    if (pmc_write(pmcids[counter_index], 0) < 0) {
+      xo_err(EX_OSERR, "FAIL: pmc_write (%s) for %s", strerror(errno), counter_set[counter_index]);
+    }
     if (pmc_start(pmcids[counter_index]) < 0) {
       xo_err(EX_OSERR, "FAIL: pmc_start (%s) for %s", strerror(errno), counter_set[counter_index]);
     }
@@ -1889,15 +1888,18 @@ benchmark_test_one_file(const char *inname, const char *outname)
       xo_err(EX_OSERR, "FAIL: cpuset_setaffinity (%s)", strerror(errno));
    }
 
+   pmc_setup_run();
+
+   int kerror = test_one_file(inname, outname);
+
    /* Run function call benchmark in a loop */
    for (unsigned outer_it_no = 0; outer_it_no < NO_OUTER_ITERATIONS; ++outer_it_no) {
 
       /* Attach and start counters */
-      pmc_setup_run();
       pmc_begin();
 
       /* Run the tests */
-      int kerror = test_one_file(inname, outname);
+      kerror = test_one_file(inname, outname);
 
       /* Read counter values */
       for (unsigned counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
@@ -1908,7 +1910,6 @@ benchmark_test_one_file(const char *inname, const char *outname)
 
       /* Detach counters */
       pmc_end();
-      pmc_teardown_run();
 
       /* If an error has occurred, return the error */
       if (kerror) {
@@ -1916,25 +1917,15 @@ benchmark_test_one_file(const char *inname, const char *outname)
       }
    }
 
-   /* Initialise xo state */
-#ifdef SANDBOX
-   xo_open_container("pngtest-sandbox");
-#else
-   xo_open_container("pngtest");
-#endif
+   pmc_teardown_run();
 
+   /* Initialise xo state */
    for (unsigned counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
       xo_open_list(counter_set[counter_index]);
       for (unsigned i = 0; i < NO_OUTER_ITERATIONS; ++i)
          xo_emit("{la:/%U}\n", counter_set[counter_index], pmc_values[counter_index][i]);
       xo_close_list(counter_set[counter_index]);
    }
-
-#ifdef SANDBOX
-   xo_close_container("pngtest-sandbox");
-#else
-   xo_close_container("pngtest");
-#endif
 
    /* Finish writing out data */
    xo_finish();
