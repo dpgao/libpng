@@ -54,10 +54,10 @@
 
 #define NUM_COUNTERS (4U)
 static const char *counter_set[] = {
-        "CPU_CYCLES",
-        "BR_MIS_PRED",
-        "INST_RETIRED",
-        "L1D_CACHE_REFILL"
+   "CPU_CYCLES",
+   "BR_MIS_PRED",
+   "INST_RETIRED",
+   "L1D_CACHE_REFILL"
 };
 
 #define NO_OUTER_ITERATIONS  (1000U)
@@ -68,35 +68,23 @@ static unsigned long pmc_values[NUM_COUNTERS][NO_OUTER_ITERATIONS];
 static void
 pmc_setup_run(void)
 {
-   for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
-      if (pmc_allocate(counter_set[counter_index], PMC_MODE_TC, 0, PMC_CPU_ANY, &pmcids[counter_index], 0) < 0) {
-         xo_err(EX_OSERR, "FAIL: pmc_allocate (%s) for %s", strerror(errno), counter_set[counter_index]);
-      }
-      if (pmc_attach(pmcids[counter_index], 0) < 0) {
-         xo_err(EX_OSERR, "FAIL: pmc_attach (%s) for %s", strerror(errno), counter_set[counter_index]);
-      }
-   }
+   pmc_init();
 }
 
 static void
 pmc_teardown_run(void)
 {
-   for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
-      if (pmc_detach(pmcids[counter_index], 0) < 0) {
-         xo_err(EX_OSERR, "FAIL: pmc_detach (%s) for %s", strerror(errno), counter_set[counter_index]);
-      }
-      if (pmc_release(pmcids[counter_index]) < 0) {
-         xo_err(EX_OSERR, "FAIL: pmc_release (%s) for %s", strerror(errno), counter_set[counter_index]);
-      }
-   }
 }
 
 static __inline void
 pmc_begin(void)
 {
    for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
-      if (pmc_write(pmcids[counter_index], 0) < 0) {
-         xo_err(EX_OSERR, "FAIL: pmc_write (%s) for %s", strerror(errno), counter_set[counter_index]);
+      if (pmc_allocate(counter_set[counter_index], PMC_MODE_TC, 0, PMC_CPU_ANY, &pmcids[counter_index], 0) < 0) {
+         xo_err(EX_OSERR, "FAIL: pmc_allocate (%s) for %s", strerror(errno), counter_set[counter_index]);
+      }
+      if (pmc_attach(pmcids[counter_index], 0) < 0) {
+         xo_err(EX_OSERR, "FAIL: pmc_attach (%s) for %s", strerror(errno), counter_set[counter_index]);
       }
    }
    for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
@@ -109,11 +97,19 @@ pmc_begin(void)
 static __inline void
 pmc_end(void)
 {
-  for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
+   for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
       if (pmc_stop(pmcids[counter_index]) < 0) {
          xo_err(EX_OSERR, "FAIL: pmc_stop (%s) for %s", strerror(errno), counter_set[counter_index]);
       }
-  }
+   }
+   for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
+      if (pmc_detach(pmcids[counter_index], 0) < 0) {
+         xo_err(EX_OSERR, "FAIL: pmc_detach (%s) for %s", strerror(errno), counter_set[counter_index]);
+      }
+      if (pmc_release(pmcids[counter_index]) < 0) {
+         xo_err(EX_OSERR, "FAIL: pmc_release (%s) for %s", strerror(errno), counter_set[counter_index]);
+      }
+   }
 }
 
 /* Known chunks that exist in pngtest.png must be supported or pngtest will fail
@@ -1879,9 +1875,6 @@ test_one_file(const char *inname, const char *outname)
 static int
 benchmark_test_one_file(const char *inname, const char *outname)
 {
-   /* Initialise PMC library */
-   pmc_init();
-
    cpuset_t cpuset_mask;
    /* Pin the benchmark to CPU 0 */
    CPU_ZERO(&cpuset_mask);
