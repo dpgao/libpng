@@ -68,39 +68,41 @@ static unsigned long pmc_values[NUM_COUNTERS][NO_OUTER_ITERATIONS];
 static void
 pmc_setup_run(void)
 {
-  for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
-    if (pmc_allocate(counter_set[counter_index], PMC_MODE_TC, 0, PMC_CPU_ANY, &pmcids[counter_index], 0) < 0) {
-      xo_err(EX_OSERR, "FAIL: pmc_allocate (%s) for %s", strerror(errno), counter_set[counter_index]);
-    }
-    if (pmc_attach(pmcids[counter_index], 0) < 0) {
-      xo_err(EX_OSERR, "FAIL: pmc_attach (%s) for %s", strerror(errno), counter_set[counter_index]);
-    }
-  }
+   for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
+      if (pmc_allocate(counter_set[counter_index], PMC_MODE_TC, 0, PMC_CPU_ANY, &pmcids[counter_index], 0) < 0) {
+         xo_err(EX_OSERR, "FAIL: pmc_allocate (%s) for %s", strerror(errno), counter_set[counter_index]);
+      }
+      if (pmc_attach(pmcids[counter_index], 0) < 0) {
+         xo_err(EX_OSERR, "FAIL: pmc_attach (%s) for %s", strerror(errno), counter_set[counter_index]);
+      }
+   }
 }
 
 static void
 pmc_teardown_run(void)
 {
-  for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
-    if (pmc_detach(pmcids[counter_index], 0) < 0) {
-      xo_err(EX_OSERR, "FAIL: pmc_detach (%s) for %s", strerror(errno), counter_set[counter_index]);
-    }
-    if (pmc_release(pmcids[counter_index]) < 0) {
-      xo_err(EX_OSERR, "FAIL: pmc_release (%s) for %s", strerror(errno), counter_set[counter_index]);
-    }
-  }
+   for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
+      if (pmc_detach(pmcids[counter_index], 0) < 0) {
+         xo_err(EX_OSERR, "FAIL: pmc_detach (%s) for %s", strerror(errno), counter_set[counter_index]);
+      }
+      if (pmc_release(pmcids[counter_index]) < 0) {
+         xo_err(EX_OSERR, "FAIL: pmc_release (%s) for %s", strerror(errno), counter_set[counter_index]);
+      }
+   }
 }
 
 static __inline void
 pmc_begin(void)
 {
-  for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
-    if (pmc_write(pmcids[counter_index], 0) < 0) {
-      xo_err(EX_OSERR, "FAIL: pmc_write (%s) for %s", strerror(errno), counter_set[counter_index]);
-    }
-    if (pmc_start(pmcids[counter_index]) < 0) {
-      xo_err(EX_OSERR, "FAIL: pmc_start (%s) for %s", strerror(errno), counter_set[counter_index]);
-    }
+   for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
+      if (pmc_write(pmcids[counter_index], 0) < 0) {
+         xo_err(EX_OSERR, "FAIL: pmc_write (%s) for %s", strerror(errno), counter_set[counter_index]);
+      }
+   }
+   for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
+      if (pmc_start(pmcids[counter_index]) < 0) {
+         xo_err(EX_OSERR, "FAIL: pmc_start (%s) for %s", strerror(errno), counter_set[counter_index]);
+      }
   }
 }
 
@@ -108,9 +110,9 @@ static __inline void
 pmc_end(void)
 {
   for (int counter_index = 0; counter_index < NUM_COUNTERS; ++counter_index) {
-    if (pmc_stop(pmcids[counter_index]) < 0) {
-      xo_err(EX_OSERR, "FAIL: pmc_stop (%s) for %s", strerror(errno), counter_set[counter_index]);
-    }
+      if (pmc_stop(pmcids[counter_index]) < 0) {
+         xo_err(EX_OSERR, "FAIL: pmc_stop (%s) for %s", strerror(errno), counter_set[counter_index]);
+      }
   }
 }
 
