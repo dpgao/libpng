@@ -47,7 +47,7 @@
 #include "png.h"
 
 #ifdef SANDBOX
-#define DLWRAP_CALLBACK(callback)   dlwrap_callback(callback)
+#define DLWRAP_CALLBACK(callback)   (__##callback)
 #else
 #define DLWRAP_CALLBACK(callback)   callback
 #endif
@@ -240,6 +240,8 @@ static int status_pass = 1;
 static int status_dots_requested = 0;
 static int status_dots = 1;
 
+__attribute__((weak,alias("read_row_callback"))) void PNGCBAPI
+__read_row_callback(png_structp png_ptr, png_uint_32 row_number, int pass);
 static void PNGCBAPI
 read_row_callback(png_structp png_ptr, png_uint_32 row_number, int pass)
 {
@@ -265,6 +267,8 @@ read_row_callback(png_structp png_ptr, png_uint_32 row_number, int pass)
 }
 
 #ifdef PNG_WRITE_SUPPORTED
+__attribute__((weak,alias("write_row_callback"))) void PNGCBAPI
+__write_row_callback(png_structp png_ptr, png_uint_32 row_number, int pass);
 static void PNGCBAPI
 write_row_callback(png_structp png_ptr, png_uint_32 row_number, int pass)
 {
@@ -279,6 +283,8 @@ write_row_callback(png_structp png_ptr, png_uint_32 row_number, int pass)
 #ifdef PNG_READ_USER_TRANSFORM_SUPPORTED
 /* Example of using a user transform callback (doesn't do anything at present).
  */
+__attribute__((weak,alias("read_user_callback"))) void PNGCBAPI
+__read_user_callback(png_structp png_ptr, png_row_infop row_info, png_bytep data);
 static void PNGCBAPI
 read_user_callback(png_structp png_ptr, png_row_infop row_info, png_bytep data)
 {
@@ -295,6 +301,8 @@ read_user_callback(png_structp png_ptr, png_row_infop row_info, png_bytep data)
 
 static png_uint_32 zero_samples;
 
+__attribute__((weak,alias("count_zero_samples"))) void PNGCBAPI
+__count_zero_samples(png_structp png_ptr, png_row_infop row_info, png_bytep data);
 static void PNGCBAPI
 count_zero_samples(png_structp png_ptr, png_row_infop row_info, png_bytep data)
 {
@@ -522,6 +530,8 @@ typedef struct
    const char *file_name;
 }  pngtest_error_parameters;
 
+__attribute__((weak,alias("pngtest_warning"))) void PNGCBAPI
+__pngtest_warning(png_structp png_ptr, png_const_charp message);
 static void PNGCBAPI
 pngtest_warning(png_structp png_ptr, png_const_charp message)
 {
@@ -542,6 +552,8 @@ pngtest_warning(png_structp png_ptr, png_const_charp message)
  * function is used by default, or if the program supplies NULL for the
  * error function pointer in png_set_error_fn().
  */
+__attribute__((weak,alias("pngtest_error"))) void PNGCBAPI
+__pngtest_error(png_structp png_ptr, png_const_charp message);
 static void PNGCBAPI
 pngtest_error(png_structp png_ptr, png_const_charp message)
 {
@@ -758,6 +770,8 @@ set_location(png_structp png_ptr, struct user_chunk_data *data, int what)
    return 1; /* handled */
 }
 
+__attribute__((weak,alias("read_user_chunk_callback"))) int PNGCBAPI
+__read_user_chunk_callback(png_struct *png_ptr, png_unknown_chunkp chunk);
 static int PNGCBAPI
 read_user_chunk_callback(png_struct *png_ptr, png_unknown_chunkp chunk)
 {
