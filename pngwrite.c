@@ -1989,8 +1989,8 @@ png_image_write_main(png_voidp argument)
 
          png_set_IHDR(png_ptr, info_ptr, image->width, image->height,
              entries > 16 ? 8 : (entries > 4 ? 4 : (entries > 2 ? 2 : 1)),
-             PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE,
-             PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+             PNG_COLOR_TYPE_PALETTE, &(struct IHDR_args) { PNG_INTERLACE_NONE,
+             PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE });
 
          png_image_set_PLTE(display);
       }
@@ -2005,7 +2005,7 @@ png_image_write_main(png_voidp argument)
           write_16bit ? 16 : 8,
           ((format & PNG_FORMAT_FLAG_COLOR) ? PNG_COLOR_MASK_COLOR : 0) +
           ((format & PNG_FORMAT_FLAG_ALPHA) ? PNG_COLOR_MASK_ALPHA : 0),
-          PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+          &(struct IHDR_args) { PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE });
 
    /* Counter-intuitively the data transformations must be called *after*
     * png_write_info, not before as in the read code, but the 'set' functions
@@ -2019,13 +2019,13 @@ png_image_write_main(png_voidp argument)
       png_set_gAMA_fixed(png_ptr, info_ptr, PNG_GAMMA_LINEAR);
 
       if ((image->flags & PNG_IMAGE_FLAG_COLORSPACE_NOT_sRGB) == 0)
-         png_set_cHRM_fixed(png_ptr, info_ptr,
+         png_set_cHRM_fixed(png_ptr, info_ptr, &(struct cHRM_fixed_args) {
              /* color      x       y */
              /* white */ 31270, 32900,
              /* red   */ 64000, 33000,
              /* green */ 30000, 60000,
              /* blue  */ 15000,  6000
-         );
+         });
    }
 
    else if ((image->flags & PNG_IMAGE_FLAG_COLORSPACE_NOT_sRGB) == 0)
