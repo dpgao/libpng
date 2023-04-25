@@ -1221,14 +1221,11 @@ test_one_file(const char *inname, const char *outname)
 #ifdef PNG_FLOATING_POINT_SUPPORTED
 #ifdef PNG_cHRM_SUPPORTED
    {
-      double white_x, white_y, red_x, red_y, green_x, green_y, blue_x,
-          blue_y;
+      struct cHRM_args args;
 
-      if (png_get_cHRM(read_ptr, read_info_ptr, &white_x, &white_y, &red_x,
-          &red_y, &green_x, &green_y, &blue_x, &blue_y) != 0)
+      if (png_get_cHRM(read_ptr, read_info_ptr, &args) != 0)
       {
-         png_set_cHRM(write_ptr, write_info_ptr, white_x, white_y, red_x,
-             red_y, green_x, green_y, blue_x, blue_y);
+         png_set_cHRM(write_ptr, write_info_ptr, &args);
       }
    }
 #endif

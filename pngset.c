@@ -107,9 +107,16 @@ png_set_cHRM_XYZ_fixed(png_const_structrp png_ptr, png_inforp info_ptr,
 #  ifdef PNG_FLOATING_POINT_SUPPORTED
 void PNGAPI
 png_set_cHRM(png_const_structrp png_ptr, png_inforp info_ptr,
-    double white_x, double white_y, double red_x, double red_y,
-    double green_x, double green_y, double blue_x, double blue_y)
+    struct cHRM_args *args)
 {
+   double white_x = args->white_x;
+   double white_y = args->white_y;
+   double red_x = args->red_x;
+   double red_y = args->red_y;
+   double green_x = args->green_x;
+   double green_y = args->green_y;
+   double blue_x = args->blue_x;
+   double blue_y = args->blue_y;
    png_set_cHRM_fixed(png_ptr, info_ptr, &(struct cHRM_fixed_args) {
       png_fixed(png_ptr, white_x, "cHRM White X"),
       png_fixed(png_ptr, white_y, "cHRM White Y"),

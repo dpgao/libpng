@@ -1932,10 +1932,12 @@ PNG_EXPORT(132, void, png_set_bKGD, (png_const_structrp png_ptr,
 #endif
 
 #ifdef PNG_cHRM_SUPPORTED
+struct cHRM_args {
+    double white_x, white_y, red_x, red_y, green_x, green_y, blue_x, blue_y;
+};
 PNG_FP_EXPORT(133, png_uint_32, png_get_cHRM, (png_const_structrp png_ptr,
-    png_const_inforp info_ptr, double *white_x, double *white_y, double *red_x,
-    double *red_y, double *green_x, double *green_y, double *blue_x,
-    double *blue_y))
+    png_const_inforp info_ptr,
+    struct cHRM_args *))
 PNG_FP_EXPORT(230, png_uint_32, png_get_cHRM_XYZ, (png_const_structrp png_ptr,
     png_const_inforp info_ptr, double *red_X, double *red_Y, double *red_Z,
     double *green_X, double *green_Y, double *green_Z, double *blue_X,
@@ -1958,9 +1960,7 @@ PNG_FIXED_EXPORT(231, png_uint_32, png_get_cHRM_XYZ_fixed,
 
 #ifdef PNG_cHRM_SUPPORTED
 PNG_FP_EXPORT(135, void, png_set_cHRM, (png_const_structrp png_ptr,
-    png_inforp info_ptr,
-    double white_x, double white_y, double red_x, double red_y, double green_x,
-    double green_y, double blue_x, double blue_y))
+    png_inforp info_ptr, struct cHRM_args *))
 PNG_FP_EXPORT(232, void, png_set_cHRM_XYZ, (png_const_structrp png_ptr,
     png_inforp info_ptr, double red_X, double red_Y, double red_Z,
     double green_X, double green_Y, double green_Z, double blue_X,

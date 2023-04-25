@@ -510,9 +510,17 @@ png_get_bKGD(png_const_structrp png_ptr, png_inforp info_ptr,
 #  ifdef PNG_FLOATING_POINT_SUPPORTED
 png_uint_32 PNGAPI
 png_get_cHRM(png_const_structrp png_ptr, png_const_inforp info_ptr,
-    double *white_x, double *white_y, double *red_x, double *red_y,
-    double *green_x, double *green_y, double *blue_x, double *blue_y)
+    struct cHRM_args *args)
 {
+   double *white_x = &args->white_x;
+   double *white_y = &args->white_y;
+   double *red_x = &args->red_x;
+   double *red_y = &args->red_y;
+   double *green_x = &args->green_x;
+   double *green_y = &args->green_y;
+   double *blue_x = &args->blue_x;
+   double *blue_y = &args->blue_y;
+
    /* Quiet API change: this code used to only return the end points if a cHRM
     * chunk was present, but the end points can also come from iCCP or sRGB
     * chunks, so in 1.6.0 the png_get_ APIs return the end points regardless and
